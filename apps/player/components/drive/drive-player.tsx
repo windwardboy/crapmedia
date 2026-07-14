@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { WaveBars } from "@crapmedia/ui";
+import { PlaybackErrorBanner } from "@/components/playback/playback-error-banner";
 import { TransportControls } from "@/components/playback/transport-controls";
 import { usePlaybackProgress } from "@/hooks/use-playback-progress";
+import { usePlaybackSession } from "@/hooks/use-playback-session";
 import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
 import { YouTubePlayer } from "@/components/youtube/youtube-player";
 import { formatDuration } from "@/lib/youtube/duration";
@@ -20,6 +22,7 @@ export function DrivePlayer({
   const {
     index,
     playing,
+    setPlaying,
     track,
     videoId,
     playerRef,
@@ -33,7 +36,27 @@ export function DrivePlayer({
     toggleLoop,
     hasNext,
     hasPrev,
+    resumeSec,
+    cacheResume,
   } = useYoutubePlaylistPlayback(tracks);
+
+  const {
+    playbackError,
+    onPlayerError,
+    onEnded,
+    dismissError,
+    skipOnError,
+  } = usePlaybackSession({
+    trackId: track?.id,
+    videoId,
+    playerRef,
+    playing,
+    setPlaying,
+    handleEnded,
+    hasNext,
+    goNext,
+    cacheResume,
+  });
 
   const { current, duration, percent } = usePlaybackProgress(
     playerRef,
@@ -91,16 +114,18 @@ export function DrivePlayer({
     );
   }
 
+  const resumeAt = resumeSec(track);
+
   return (
     <>
-      {/* Hidden player — audio only in the car */}
       <div className="sr-only" aria-hidden>
         <YouTubePlayer
           ref={playerRef}
           videoId={videoId}
           playing={playing}
-          startSeconds={track.last_position_sec ?? 0}
-          onEnded={handleEnded}
+          startSeconds={resumeAt}
+          onEnded={onEnded}
+          onError={onPlayerError}
         />
       </div>
 
@@ -115,6 +140,17 @@ export function DrivePlayer({
         <p className="mt-1 text-sm text-cm-text-muted">
           {playlist.name} · {index + 1} of {tracks.length}
         </p>
+
+        {playbackError ? (
+          <div className="mt-6 w-full max-w-md">
+            <PlaybackErrorBanner
+              message={playbackError}
+              hasNext={hasNext}
+              onSkip={skipOnError}
+              onDismiss={dismissError}
+            />
+          </div>
+        ) : null}
 
         <div className="my-10 flex w-full justify-center">
           <WaveBars className={playing ? "" : "paused"} />
@@ -156,7 +192,9 @@ export function DrivePlayer({
 
         <p className="mt-6 max-w-sm text-center text-xs text-cm-text-muted">
           {!playing
-            ? "Tap play to start."
+            ? resumeAt >= 30
+              ? `Resumes from ${formatDuration(resumeAt)} · tap play to continue`
+              : "Tap play to start."
             : wakeLock
               ? "Screen wake lock active."
               : "Playing."}

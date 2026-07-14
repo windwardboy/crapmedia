@@ -27,6 +27,11 @@ async function youtubeFetch<T>(path: string, params: Record<string, string>) {
 
   const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
   if (!res.ok) {
+    if (res.status === 403) {
+      throw new Error(
+        "YouTube API quota exceeded. Try again later or add fewer videos at once.",
+      );
+    }
     const body = await res.text();
     throw new Error(
       `YouTube API error (${res.status}): ${body.slice(0, 200)}`,

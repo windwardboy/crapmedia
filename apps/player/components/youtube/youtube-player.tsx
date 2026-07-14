@@ -27,6 +27,7 @@ type YTNamespace = {
       events?: {
         onReady?: () => void;
         onStateChange?: (event: { data: number }) => void;
+        onError?: (event: { data: number }) => void;
       };
     },
   ) => YTPlayer;
@@ -89,10 +90,11 @@ export const YouTubePlayer = forwardRef<
     playing: boolean;
     startSeconds?: number;
     onEnded?: () => void;
+    onError?: (code: number) => void;
     className?: string;
   }
 >(function YouTubePlayer(
-  { videoId, playing, startSeconds = 0, onEnded, className },
+  { videoId, playing, startSeconds = 0, onEnded, onError, className },
   ref,
 ) {
   const elementId = useId().replace(/:/g, "");
@@ -100,10 +102,12 @@ export const YouTubePlayer = forwardRef<
   const readyRef = useRef(false);
   const playingRef = useRef(playing);
   const onEndedRef = useRef(onEnded);
+  const onErrorRef = useRef(onError);
   const pendingRef = useRef<PendingLoad | null>(null);
 
   playingRef.current = playing;
   onEndedRef.current = onEnded;
+  onErrorRef.current = onError;
 
   function applyLoad(load: PendingLoad) {
     const player = playerRef.current;
@@ -175,6 +179,9 @@ export const YouTubePlayer = forwardRef<
             ) {
               onEndedRef.current();
             }
+          },
+          onError: (event) => {
+            onErrorRef.current?.(event.data);
           },
         },
       });

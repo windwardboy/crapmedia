@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { PlaybackErrorBanner } from "@/components/playback/playback-error-banner";
 import { TransportControls } from "@/components/playback/transport-controls";
+import { usePlaybackSession } from "@/hooks/use-playback-session";
 import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
 import { YouTubePlayer } from "@/components/youtube/youtube-player";
+import { formatDuration } from "@/lib/youtube/duration";
 import type { PlaylistTrack } from "@/lib/playlists/types";
 
 export function PlaylistListenClient({
@@ -17,6 +20,7 @@ export function PlaylistListenClient({
   const {
     index,
     playing,
+    setPlaying,
     track,
     videoId,
     playerRef,
@@ -30,7 +34,27 @@ export function PlaylistListenClient({
     toggleLoop,
     hasNext,
     hasPrev,
+    resumeSec,
+    cacheResume,
   } = useYoutubePlaylistPlayback(tracks);
+
+  const {
+    playbackError,
+    onPlayerError,
+    onEnded,
+    dismissError,
+    skipOnError,
+  } = usePlaybackSession({
+    trackId: track?.id,
+    videoId,
+    playerRef,
+    playing,
+    setPlaying,
+    handleEnded,
+    hasNext,
+    goNext,
+    cacheResume,
+  });
 
   if (!track || !videoId) {
     return (
@@ -40,15 +64,27 @@ export function PlaylistListenClient({
     );
   }
 
+  const resumeAt = resumeSec(track);
+
   return (
     <div className="space-y-8">
       <YouTubePlayer
         ref={playerRef}
         videoId={videoId}
         playing={playing}
-        startSeconds={track.last_position_sec ?? 0}
-        onEnded={handleEnded}
+        startSeconds={resumeAt}
+        onEnded={onEnded}
+        onError={onPlayerError}
       />
+
+      {playbackError ? (
+        <PlaybackErrorBanner
+          message={playbackError}
+          hasNext={hasNext}
+          onSkip={skipOnError}
+          onDismiss={dismissError}
+        />
+      ) : null}
 
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-cm-accent">
@@ -61,7 +97,9 @@ export function PlaylistListenClient({
         </p>
         {!playing ? (
           <p className="mt-2 text-xs text-cm-text-muted">
-            Tap play below to start (browser autoplay rules).
+            {resumeAt >= 30
+              ? `Resumes from ${formatDuration(resumeAt)} · tap play to continue`
+              : "Tap play below to start (browser autoplay rules)."}
           </p>
         ) : null}
       </div>

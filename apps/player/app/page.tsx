@@ -18,14 +18,15 @@ export default function HomePage() {
           />
           <div>
             <p className="text-sm font-medium uppercase tracking-wide text-cm-accent">
-              Phase 0 · Work in progress
+              YouTube playlists · Driving mode
             </p>
             <h1 className="mt-1 text-3xl font-bold tracking-tight">
               CrapMedia Player
             </h1>
             <p className="mt-2 max-w-lg text-cm-text-muted">
-              Playlists, driving mode, and library connectors — coming together.
-              YouTube streaming and remote MP3 libraries land in Phase 1–2.
+              Import playlists from YouTube, listen with video, or drive with
+              big controls and your default queue. Playback resumes where you
+              left off.
             </p>
           </div>
         </div>
@@ -40,7 +41,7 @@ export default function HomePage() {
             </div>
             <h2 className="mt-2 text-xl font-semibold">Driving mode</h2>
             <p className="mt-2 text-sm text-cm-text-muted">
-              Large controls, wake lock, and your default playlist — for the car.
+              Large controls, wake lock, shuffle & loop — built for the car.
             </p>
           </Link>
 
@@ -49,11 +50,11 @@ export default function HomePage() {
             className="cm-card block p-6 transition hover:border-cm-accent"
           >
             <div className="text-xs font-semibold uppercase tracking-wide text-cm-accent">
-              Phase 1
+              Library
             </div>
             <h2 className="mt-2 text-xl font-semibold">Playlists</h2>
             <p className="mt-2 text-sm text-cm-text-muted">
-              Create queues and import from YouTube.
+              Create queues, import from YouTube, set your driving default.
             </p>
           </Link>
         </div>

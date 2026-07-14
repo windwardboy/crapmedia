@@ -32,9 +32,19 @@ export function useYoutubePlaylistPlayback(tracks: PlaylistTrack[]) {
   const [shuffleOrder, setShuffleOrder] = useState<number[] | null>(null);
   const [shufflePos, setShufflePos] = useState(0);
   const playerRef = useRef<YouTubePlayerHandle>(null);
+  const resumeCacheRef = useRef<Record<string, number>>({});
 
   const track = tracks[index];
   const videoId = track ? videoIdFromTrack(track) : null;
+
+  const resumeSec = useCallback((t: PlaylistTrack | undefined) => {
+    if (!t) return 0;
+    return resumeCacheRef.current[t.id] ?? t.last_position_sec ?? 0;
+  }, []);
+
+  const cacheResume = useCallback((trackId: string, sec: number) => {
+    resumeCacheRef.current[trackId] = sec;
+  }, []);
 
   const loadTrack = useCallback(
     (nextIndex: number, autoplay: boolean, nextShufflePos?: number) => {
@@ -47,10 +57,10 @@ export function useYoutubePlaylistPlayback(tracks: PlaylistTrack[]) {
       }
       setPlaying(autoplay);
       if (autoplay) {
-        playerRef.current?.loadAndPlay(vid, t.last_position_sec ?? 0);
+        playerRef.current?.loadAndPlay(vid, resumeSec(t));
       }
     },
-    [tracks],
+    [tracks, resumeSec],
   );
 
   const advance = useCallback(
@@ -128,10 +138,7 @@ export function useYoutubePlaylistPlayback(tracks: PlaylistTrack[]) {
     if (!playing) {
       setPlaying(true);
       if (videoId) {
-        playerRef.current?.loadAndPlay(
-          videoId,
-          track?.last_position_sec ?? 0,
-        );
+        playerRef.current?.loadAndPlay(videoId, resumeSec(track));
       } else {
         playerRef.current?.play();
       }
@@ -139,7 +146,7 @@ export function useYoutubePlaylistPlayback(tracks: PlaylistTrack[]) {
       setPlaying(false);
       playerRef.current?.pause();
     }
-  }, [playing, videoId, track?.last_position_sec]);
+  }, [playing, videoId, track, resumeSec]);
 
   const toggleShuffle = useCallback(() => {
     setShuffle((on) => {
@@ -191,5 +198,7 @@ export function useYoutubePlaylistPlayback(tracks: PlaylistTrack[]) {
     toggleLoop,
     hasNext,
     hasPrev,
+    resumeSec,
+    cacheResume,
   };
 }
