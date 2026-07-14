@@ -46,14 +46,16 @@ Copy `.env.example` in each app when Phase 1 adds Supabase / YouTube.
 
 ## Deploy (Vercel)
 
-Two projects from one repo:
+Two projects from one repo. **Root Directory** must be set per project; `vercel.json` in each app runs install/build from the monorepo root.
 
 | Project | Root directory | Domain |
 |---------|----------------|--------|
 | `crapmedia-web` | `apps/web` | `crapmedia.com` |
 | `crapmedia-player` | `apps/player` | `play.crapmedia.com` |
 
-Set `NEXT_PUBLIC_PLAYER_URL=https://play.crapmedia.com` on the **web** project.
+If install fails, confirm **Settings → General → Root Directory** matches the table. Each app’s `vercel.json` uses `cd ../.. && pnpm install`.
+
+Set `NEXT_PUBLIC_PLAYER_URL=https://play.crapmedia.com` on the **web** project, then redeploy.
 
 ## Monorepo layout
 
