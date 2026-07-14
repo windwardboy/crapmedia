@@ -4,7 +4,6 @@
  * Warm grey-brown charcoal for long listening sessions.
  * Pairs with the same accent green as Charcoal.
  */
-:root,
 [data-theme="stone"] {
   --cm-bg: #2a2826;
   --cm-bg-elevated: #353230;
