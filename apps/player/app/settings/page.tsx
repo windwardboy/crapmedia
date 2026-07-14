@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
 import { AuthSection } from "@/components/auth-section";
 import { SkinPicker } from "@/components/skin-picker";
@@ -6,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 export default async function SettingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ auth?: string }>;
+  searchParams: Promise<{ auth?: string; next?: string }>;
 }) {
   const supabase = await createClient();
   const {
@@ -14,6 +15,14 @@ export default async function SettingsPage({
   } = await supabase.auth.getUser();
   const params = await searchParams;
   const authError = params.auth === "error";
+  const nextPath =
+    params.next?.startsWith("/") && !params.next.startsWith("//")
+      ? params.next
+      : "/settings";
+
+  if (user && params.next?.startsWith("/") && !params.next.startsWith("//")) {
+    redirect(params.next);
+  }
 
   return (
     <>
@@ -31,7 +40,12 @@ export default async function SettingsPage({
               Sign-in failed. Please try again.
             </p>
           ) : null}
-          <AuthSection user={user} />
+          {!user && params.next ? (
+            <p className="mb-4 text-sm text-cm-text-muted">
+              Sign in to continue to {params.next}.
+            </p>
+          ) : null}
+          <AuthSection user={user} nextPath={nextPath} />
         </section>
 
         <section className="mt-10">

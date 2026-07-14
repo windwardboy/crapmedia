@@ -44,15 +44,18 @@ export default function HomePage() {
             </p>
           </Link>
 
-          <div className="cm-card p-6 opacity-80">
-            <div className="text-xs font-semibold uppercase tracking-wide text-cm-text-muted">
+          <Link
+            href="/playlists"
+            className="cm-card block p-6 transition hover:border-cm-accent"
+          >
+            <div className="text-xs font-semibold uppercase tracking-wide text-cm-accent">
               Phase 1
             </div>
             <h2 className="mt-2 text-xl font-semibold">Playlists</h2>
             <p className="mt-2 text-sm text-cm-text-muted">
-              YouTube import, queue, and resume — not wired up yet.
+              Create queues for listening. YouTube import lands next.
             </p>
-          </div>
+          </Link>
         </div>
 
         <p className="mt-8 text-sm text-cm-text-muted">

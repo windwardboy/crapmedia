@@ -4,15 +4,22 @@ import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-export function AuthSection({ user }: { user: User | null }) {
+export function AuthSection({
+  user,
+  nextPath = "/settings",
+}: {
+  user: User | null;
+  nextPath?: string;
+}) {
   const router = useRouter();
   const supabase = createClient();
 
   async function signInWithGoogle() {
+    const next = encodeURIComponent(nextPath);
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/settings`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${next}`,
       },
     });
   }

@@ -32,13 +32,19 @@ Or individually:
 pnpm build
 ```
 
-## Player routes (Phase 0)
+## Player routes
 
 | Route | Purpose |
 |-------|---------|
-| `/` | Home shell |
-| `/drive` | Driving mode demo + wake lock |
-| `/settings` | Charcoal / Stone skin picker |
+| `/` | Home |
+| `/playlists` | List & create playlists |
+| `/playlists/[id]` | Edit playlist |
+| `/drive` | Driving mode |
+| `/settings` | Account & appearance |
+
+## Supabase database
+
+After creating the Supabase project, run the SQL in [`supabase/migrations/001_playlists.sql`](../supabase/migrations/001_playlists.sql) via **SQL Editor** in the dashboard (creates `playlists` + `playlist_tracks` with RLS).
 
 ## Environment
 

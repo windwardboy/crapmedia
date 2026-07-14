@@ -3,6 +3,7 @@ import Image from "next/image";
 
 const links = [
   { href: "/", label: "Home" },
+  { href: "/playlists", label: "Playlists" },
   { href: "/drive", label: "Drive" },
   { href: "/settings", label: "Settings" },
 ];
