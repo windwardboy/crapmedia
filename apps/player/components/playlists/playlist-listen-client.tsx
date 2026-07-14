@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { PlaybackModeControls } from "@/components/playback/playback-mode-controls";
+import { TransportControls } from "@/components/playback/transport-controls";
 import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
 import { YouTubePlayer } from "@/components/youtube/youtube-player";
 import type { PlaylistTrack } from "@/lib/playlists/types";
@@ -66,42 +66,18 @@ export function PlaylistListenClient({
         ) : null}
       </div>
 
-      <div className="flex flex-col items-center gap-3">
-        <div className="flex items-center justify-center gap-4">
-          <button
-            type="button"
-            onClick={goPrev}
-            disabled={!hasPrev}
-            className="cm-btn cm-btn-transparent h-14 w-14 text-xl disabled:opacity-40"
-            aria-label="Previous"
-          >
-            ⏮
-          </button>
-          <button
-            type="button"
-            onClick={togglePlay}
-            className="cm-btn cm-btn-transparent h-16 w-16 text-2xl"
-            aria-label={playing ? "Pause" : "Play"}
-          >
-            {playing ? "⏸" : "▶"}
-          </button>
-          <button
-            type="button"
-            onClick={goNext}
-            disabled={!hasNext}
-            className="cm-btn cm-btn-transparent h-14 w-14 text-xl disabled:opacity-40"
-            aria-label="Next"
-          >
-            ⏭
-          </button>
-        </div>
-        <PlaybackModeControls
-          shuffle={shuffle}
-          loop={loop}
-          onToggleShuffle={toggleShuffle}
-          onToggleLoop={toggleLoop}
-        />
-      </div>
+      <TransportControls
+        playing={playing}
+        hasPrev={hasPrev}
+        hasNext={hasNext}
+        shuffle={shuffle}
+        loop={loop}
+        onPrev={goPrev}
+        onNext={goNext}
+        onTogglePlay={togglePlay}
+        onToggleShuffle={toggleShuffle}
+        onToggleLoop={toggleLoop}
+      />
 
       <p className="text-center text-sm">
         <Link

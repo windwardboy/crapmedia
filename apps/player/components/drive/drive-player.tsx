@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { WaveBars } from "@crapmedia/ui";
-import { PlaybackModeControls } from "@/components/playback/playback-mode-controls";
+import { TransportControls } from "@/components/playback/transport-controls";
 import { usePlaybackProgress } from "@/hooks/use-playback-progress";
 import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
 import { YouTubePlayer } from "@/components/youtube/youtube-player";
@@ -120,43 +120,19 @@ export function DrivePlayer({
           <WaveBars className={playing ? "" : "paused"} />
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={goPrev}
-              disabled={!hasPrev}
-              className="cm-btn cm-btn-transparent h-16 w-16 text-2xl disabled:opacity-40"
-              aria-label="Previous"
-            >
-              ⏮
-            </button>
-            <button
-              type="button"
-              onClick={togglePlay}
-              className="cm-btn cm-btn-transparent h-20 w-20 text-3xl"
-              aria-label={playing ? "Pause" : "Play"}
-            >
-              {playing ? "⏸" : "▶"}
-            </button>
-            <button
-              type="button"
-              onClick={goNext}
-              disabled={!hasNext}
-              className="cm-btn cm-btn-transparent h-16 w-16 text-2xl disabled:opacity-40"
-              aria-label="Next"
-            >
-              ⏭
-            </button>
-          </div>
-          <PlaybackModeControls
-            shuffle={shuffle}
-            loop={loop}
-            onToggleShuffle={toggleShuffle}
-            onToggleLoop={toggleLoop}
-            size="large"
-          />
-        </div>
+        <TransportControls
+          playing={playing}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+          shuffle={shuffle}
+          loop={loop}
+          onPrev={goPrev}
+          onNext={goNext}
+          onTogglePlay={togglePlay}
+          onToggleShuffle={toggleShuffle}
+          onToggleLoop={toggleLoop}
+          size="large"
+        />
 
         <div className="mt-8 w-full max-w-xs">
           <div

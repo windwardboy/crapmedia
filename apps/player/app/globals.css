@@ -86,7 +86,11 @@ body {
   justify-content: center;
   border-radius: 9999px;
   font-weight: 600;
-  transition: background-color 0.15s, transform 0.1s, border-color 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+  accent-color: transparent;
+  transition: background-color 0.15s, transform 0.1s, border-color 0.15s,
+    color 0.15s, box-shadow 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -118,6 +122,17 @@ body {
 .cm-btn-transparent:hover:not(:disabled) {
   background: rgb(255 255 255 / 0.06);
   border-color: var(--cm-border);
+}
+
+.cm-btn-outline {
+  background: transparent;
+  color: var(--cm-text);
+  border: 1px solid var(--cm-border);
+}
+
+.cm-btn-outline:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.06);
+  border-color: var(--cm-text-muted);
 }
 
 .cm-card {

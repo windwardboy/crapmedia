@@ -1,5 +1,7 @@
 "use client";
 
+import { IconLoop, IconShuffle } from "@/components/playback/playback-icons";
+
 type PlaybackModeControlsProps = {
   shuffle: boolean;
   loop: boolean;
@@ -17,10 +19,11 @@ export function PlaybackModeControls({
 }: PlaybackModeControlsProps) {
   const buttonClass =
     size === "large"
-      ? "cm-btn cm-btn-transparent h-14 w-14 text-xl"
-      : "cm-btn cm-btn-transparent h-11 w-11 text-base";
+      ? "cm-btn cm-btn-outline h-14 w-14"
+      : "cm-btn cm-btn-outline h-11 w-11";
 
-  const activeClass = "ring-2 ring-cm-accent text-cm-accent bg-transparent";
+  const iconClass = size === "large" ? "h-6 w-6" : "h-5 w-5";
+  const activeClass = "ring-2 ring-cm-accent border-cm-accent text-cm-accent";
 
   return (
     <div className="flex items-center justify-center gap-2">
@@ -32,7 +35,7 @@ export function PlaybackModeControls({
         className={`${buttonClass} ${shuffle ? activeClass : ""}`}
         title={shuffle ? "Shuffle on" : "Shuffle off"}
       >
-        🔀
+        <IconShuffle className={iconClass} />
       </button>
       <button
         type="button"
@@ -42,7 +45,7 @@ export function PlaybackModeControls({
         className={`${buttonClass} ${loop ? activeClass : ""}`}
         title={loop ? "Loop on" : "Loop off"}
       >
-        🔁
+        <IconLoop className={iconClass} />
       </button>
     </div>
   );
