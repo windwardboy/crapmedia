@@ -6,6 +6,7 @@ export type YoutubeVideoMeta = {
   channel: string;
   durationSec: number | null;
   thumbnailUrl: string | null;
+  embeddable: boolean;
 };
 
 function apiKey(): string {
@@ -49,6 +50,7 @@ type VideosResponse = {
       thumbnails?: { medium?: { url?: string }; default?: { url?: string } };
     };
     contentDetails?: { duration?: string };
+    status?: { embeddable?: boolean };
   }>;
 };
 
@@ -80,6 +82,7 @@ export async function fetchVideoMetadata(
           item.snippet?.thumbnails?.medium?.url ??
           item.snippet?.thumbnails?.default?.url ??
           null,
+        embeddable: item.status?.embeddable ?? false,
       });
     }
   }

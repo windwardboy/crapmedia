@@ -12,6 +12,7 @@ import {
 } from "@/app/playlists/youtube-actions";
 import type { ActionResult } from "@/lib/playlists/action-result";
 import type { Playlist, PlaylistTrack } from "@/lib/playlists/types";
+import { isTrackEmbedBlocked } from "@/lib/playlists/track-utils";
 import { formatDuration } from "@/lib/youtube/duration";
 
 function videoIdFromTrack(track: PlaylistTrack): string | null {
@@ -64,6 +65,7 @@ export function YoutubeTracksPanel({
   }
 
   const busy = pending || addPending || importPending;
+  const blockedTracks = tracks.filter(isTrackEmbedBlocked);
 
   return (
     <section className="space-y-6">
@@ -117,6 +119,19 @@ export function YoutubeTracksPanel({
         </form>
       </div>
 
+      {blockedTracks.length > 0 ? (
+        <div
+          role="status"
+          className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-100"
+        >
+          {blockedTracks.length === 1
+            ? "1 track can't play in the app"
+            : `${blockedTracks.length} tracks can't play in the app`}
+          {" — "}embedding is restricted by the owner. Remove them before
+          driving, or playback will skip them automatically.
+        </div>
+      ) : null}
+
       {tracks.length === 0 ? (
         <div className="cm-card p-6 text-sm text-cm-text-muted">
           Add a video or import a YouTube playlist to get started.
@@ -125,10 +140,15 @@ export function YoutubeTracksPanel({
         <ol className="cm-card divide-y divide-cm-border">
           {tracks.map((track, index) => {
             const vid = videoIdFromTrack(track);
+            const blocked = isTrackEmbedBlocked(track);
             return (
               <li
                 key={track.id}
-                className="flex items-center gap-3 px-3 py-3 text-sm sm:px-4"
+                className={`flex items-center gap-3 px-3 py-3 text-sm sm:px-4 ${
+                  blocked
+                    ? "border-l-4 border-amber-500/60 bg-amber-500/5"
+                    : ""
+                }`}
               >
                 <span className="w-6 shrink-0 text-cm-text-muted">
                   {index + 1}
@@ -146,7 +166,14 @@ export function YoutubeTracksPanel({
                   <div className="h-9 w-12 shrink-0 rounded bg-cm-bg-subtle" />
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{track.title}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="truncate font-medium">{track.title}</p>
+                    {blocked ? (
+                      <span className="shrink-0 rounded-full border border-amber-500/50 bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-200">
+                        Can&apos;t embed
+                      </span>
+                    ) : null}
+                  </div>
                   <p className="truncate text-xs text-cm-text-muted">
                     {track.artist ?? "YouTube"}
                     {track.duration_sec

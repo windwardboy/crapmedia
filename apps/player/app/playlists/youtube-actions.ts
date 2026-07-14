@@ -105,7 +105,7 @@ export async function addYoutubeTrack(
       playlist_id: playlistId,
       position,
       source_type: "youtube",
-      source_ref: { videoId },
+      source_ref: { videoId, embeddable: video.embeddable },
       title: video.title,
       artist: video.channel,
       duration_sec: video.durationSec,
@@ -115,7 +115,10 @@ export async function addYoutubeTrack(
     if (error) return { error: error.message };
 
     revalidatePlaylist(playlistId);
-    return { success: `Added “${video.title}”.` };
+    const blocked = video.embeddable
+      ? ""
+      : " It can't be played in the app — consider removing it.";
+    return { success: `Added “${video.title}”.${blocked}` };
   } catch (e) {
     return {
       error: e instanceof Error ? e.message : "Failed to add video.",
@@ -155,15 +158,17 @@ export async function importYoutubePlaylist(
     const meta = await fetchVideoMetadata(toAdd);
     let position = await nextPosition(supabase, playlistId);
     const rows = [];
+    let blockedCount = 0;
 
     for (const videoId of toAdd) {
       const video = meta.get(videoId);
       if (!video) continue;
+      if (!video.embeddable) blockedCount += 1;
       rows.push({
         playlist_id: playlistId,
         position: position++,
         source_type: "youtube",
-        source_ref: { videoId },
+        source_ref: { videoId, embeddable: video.embeddable },
         title: video.title,
         artist: video.channel,
         duration_sec: video.durationSec,
@@ -179,8 +184,12 @@ export async function importYoutubePlaylist(
     if (error) return { error: error.message };
 
     revalidatePlaylist(playlistId);
+    const blockedNote =
+      blockedCount > 0
+        ? ` ${blockedCount} can't play in the app — highlighted below.`
+        : "";
     return {
-      success: `Imported ${rows.length} track${rows.length === 1 ? "" : "s"}.`,
+      success: `Imported ${rows.length} track${rows.length === 1 ? "" : "s"}.${blockedNote}`,
     };
   } catch (e) {
     return {

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
 import { PlaylistEditor } from "@/components/playlists/playlist-editor";
 import { getPlaylist } from "@/lib/playlists/queries";
+import { syncTrackEmbeddability } from "@/lib/youtube/sync-embeddability";
 
 export default async function PlaylistDetailPage({
   params,
@@ -28,6 +29,7 @@ export default async function PlaylistDetailPage({
   }
 
   const { playlist, tracks } = result;
+  const tracksWithEmbeddability = await syncTrackEmbeddability(tracks);
 
   return (
     <>
@@ -40,7 +42,7 @@ export default async function PlaylistDetailPage({
           ← All playlists
         </Link>
         <h1 className="mt-4 text-2xl font-bold">{playlist.name}</h1>
-        <PlaylistEditor playlist={playlist} tracks={tracks} />
+        <PlaylistEditor playlist={playlist} tracks={tracksWithEmbeddability} />
       </main>
     </>
   );
