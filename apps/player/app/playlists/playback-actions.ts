@@ -20,7 +20,10 @@ export async function saveTrackPosition(
 
   const { data, error } = await supabase
     .from("playlist_tracks")
-    .update({ last_position_sec: position })
+    .update({
+      last_position_sec: position,
+      ...(position > 0 ? { last_played_at: new Date().toISOString() } : {}),
+    })
     .eq("id", trackId)
     .select("id")
     .maybeSingle();

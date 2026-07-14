@@ -1,9 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { AppNav } from "@/components/app-nav";
+import { ContinueListeningCard } from "@/components/continue-listening-card";
+import { PwaInstallHint } from "@/components/pwa-install-hint";
 import { SkinPickerLink } from "@/components/skin-picker";
+import { getContinueListening } from "@/lib/playlists/queries";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const continueListening = await getContinueListening();
+
   return (
     <>
       <AppNav />
@@ -30,6 +35,14 @@ export default function HomePage() {
             </p>
           </div>
         </div>
+
+        {continueListening ? (
+          <div className="mb-6">
+            <ContinueListeningCard data={continueListening} />
+          </div>
+        ) : null}
+
+        <PwaInstallHint />
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Link

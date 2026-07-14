@@ -46,6 +46,8 @@ pnpm build
 
 After creating the Supabase project, run the SQL in [`supabase/migrations/001_playlists.sql`](../supabase/migrations/001_playlists.sql) via **SQL Editor** in the dashboard (creates `playlists` + `playlist_tracks` with RLS).
 
+For **Continue listening** on the home screen, also run [`supabase/migrations/002_last_played_at.sql`](../supabase/migrations/002_last_played_at.sql).
+
 ## YouTube (player only)
 
 1. In [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Library** → enable **YouTube Data API v3**.

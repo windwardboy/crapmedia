@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PlaybackErrorBanner } from "@/components/playback/playback-error-banner";
 import { TransportControls } from "@/components/playback/transport-controls";
 import { usePlaybackSession } from "@/hooks/use-playback-session";
+import { usePlaybackRate } from "@/hooks/use-playback-rate";
 import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
 import { YouTubePlayer } from "@/components/youtube/youtube-player";
 import { formatDuration } from "@/lib/youtube/duration";
@@ -12,10 +13,11 @@ import type { PlaylistTrack } from "@/lib/playlists/types";
 export function PlaylistListenClient({
   playlistId,
   tracks,
+  startTrackId,
 }: {
   playlistId: string;
   tracks: PlaylistTrack[];
-  startIndex?: number;
+  startTrackId?: string;
 }) {
   const {
     index,
@@ -36,7 +38,12 @@ export function PlaylistListenClient({
     hasPrev,
     resumeSec,
     cacheResume,
-  } = useYoutubePlaylistPlayback(tracks);
+  } = useYoutubePlaylistPlayback(tracks, { startTrackId });
+
+  const { rateLabel, cycleRate } = usePlaybackRate(
+    playerRef,
+    `${videoId ?? ""}-${index}`,
+  );
 
   const {
     playbackError,
@@ -115,6 +122,8 @@ export function PlaylistListenClient({
         onTogglePlay={togglePlay}
         onToggleShuffle={toggleShuffle}
         onToggleLoop={toggleLoop}
+        rateLabel={rateLabel}
+        onCycleRate={cycleRate}
       />
 
       <p className="text-center text-sm">

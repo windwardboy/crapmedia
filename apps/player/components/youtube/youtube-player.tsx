@@ -15,6 +15,7 @@ type YTPlayer = {
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
   getCurrentTime: () => number;
   getDuration: () => number;
+  setPlaybackRate: (rate: number) => void;
   destroy: () => void;
 };
 
@@ -75,6 +76,7 @@ export type YouTubePlayerHandle = {
   play: () => void;
   pause: () => void;
   getProgress: () => { current: number; duration: number } | null;
+  setPlaybackRate: (rate: number) => void;
 };
 
 type PendingLoad = {
@@ -104,10 +106,19 @@ export const YouTubePlayer = forwardRef<
   const onEndedRef = useRef(onEnded);
   const onErrorRef = useRef(onError);
   const pendingRef = useRef<PendingLoad | null>(null);
+  const playbackRateRef = useRef(1);
 
   playingRef.current = playing;
   onEndedRef.current = onEnded;
   onErrorRef.current = onError;
+
+  function applyPlaybackRate() {
+    try {
+      playerRef.current?.setPlaybackRate(playbackRateRef.current);
+    } catch {
+      /* unsupported for some embeds */
+    }
+  }
 
   function applyLoad(load: PendingLoad) {
     const player = playerRef.current;
@@ -116,6 +127,7 @@ export const YouTubePlayer = forwardRef<
       return;
     }
     player.loadVideoById(load.videoId, load.startSeconds);
+    applyPlaybackRate();
     if (load.autoplay) {
       player.playVideo();
     }
@@ -146,6 +158,10 @@ export const YouTubePlayer = forwardRef<
         return null;
       }
     },
+    setPlaybackRate(rate: number) {
+      playbackRateRef.current = rate;
+      applyPlaybackRate();
+    },
   }));
 
   useEffect(() => {
@@ -171,6 +187,7 @@ export const YouTubePlayer = forwardRef<
             } else if (playingRef.current) {
               playerRef.current?.playVideo();
             }
+            applyPlaybackRate();
           },
           onStateChange: (event) => {
             if (

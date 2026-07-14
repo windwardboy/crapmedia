@@ -7,10 +7,13 @@ import { youtubeTracks } from "@/lib/playlists/track-utils";
 
 export default async function PlaylistListenPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ track?: string }>;
 }) {
   const { id } = await params;
+  const { track: startTrackId } = await searchParams;
   const result = await getPlaylist(id);
 
   if (result === null) {
@@ -45,6 +48,7 @@ export default async function PlaylistListenPage({
           <PlaylistListenClient
             playlistId={playlist.id}
             tracks={playable}
+            startTrackId={startTrackId}
           />
         </div>
       </main>

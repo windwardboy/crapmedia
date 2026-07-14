@@ -22,6 +22,7 @@ export type PlaylistTrack = {
   duration_sec: number | null;
   thumbnail_url: string | null;
   last_position_sec: number;
+  last_played_at: string | null;
   created_at: string;
 };
 

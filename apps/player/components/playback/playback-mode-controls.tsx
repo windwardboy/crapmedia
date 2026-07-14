@@ -7,6 +7,8 @@ type PlaybackModeControlsProps = {
   loop: boolean;
   onToggleShuffle: () => void;
   onToggleLoop: () => void;
+  rateLabel?: string;
+  onCycleRate?: () => void;
   size?: "default" | "large";
 };
 
@@ -15,6 +17,8 @@ export function PlaybackModeControls({
   loop,
   onToggleShuffle,
   onToggleLoop,
+  rateLabel,
+  onCycleRate,
   size = "default",
 }: PlaybackModeControlsProps) {
   const buttonClass =
@@ -47,6 +51,17 @@ export function PlaybackModeControls({
       >
         <IconLoop className={iconClass} />
       </button>
+      {onCycleRate && rateLabel ? (
+        <button
+          type="button"
+          onClick={onCycleRate}
+          aria-label={`Playback speed ${rateLabel}`}
+          className={`${buttonClass} ${rateLabel !== "1×" ? activeClass : ""}`}
+          title={`Speed ${rateLabel}`}
+        >
+          <span className="text-xs font-semibold tabular-nums">{rateLabel}</span>
+        </button>
+      ) : null}
     </div>
   );
 }

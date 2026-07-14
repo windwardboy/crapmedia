@@ -6,6 +6,7 @@ import { WaveBars } from "@crapmedia/ui";
 import { PlaybackErrorBanner } from "@/components/playback/playback-error-banner";
 import { TransportControls } from "@/components/playback/transport-controls";
 import { usePlaybackProgress } from "@/hooks/use-playback-progress";
+import { usePlaybackRate } from "@/hooks/use-playback-rate";
 import { usePlaybackSession } from "@/hooks/use-playback-session";
 import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
 import { YouTubePlayer } from "@/components/youtube/youtube-player";
@@ -63,6 +64,11 @@ export function DrivePlayer({
     playing,
     `${videoId ?? ""}-${index}`,
     track?.duration_sec,
+  );
+
+  const { rateLabel, cycleRate } = usePlaybackRate(
+    playerRef,
+    `${videoId ?? ""}-${index}`,
   );
 
   const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
@@ -167,6 +173,8 @@ export function DrivePlayer({
           onTogglePlay={togglePlay}
           onToggleShuffle={toggleShuffle}
           onToggleLoop={toggleLoop}
+          rateLabel={rateLabel}
+          onCycleRate={cycleRate}
           size="large"
         />
 

@@ -131,3 +131,59 @@ export async function requireUser(nextPath: string) {
 
   return { supabase, user };
 }
+
+export type ContinueListening = {
+  playlist: Playlist;
+  track: PlaylistTrack;
+};
+
+export async function getContinueListening(): Promise<ContinueListening | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data: playlists } = await supabase
+    .from("playlists")
+    .select("id")
+    .eq("user_id", user.id);
+
+  const playlistIds = (playlists ?? []).map((p) => p.id);
+  if (playlistIds.length === 0) {
+    return null;
+  }
+
+  const { data: track, error } = await supabase
+    .from("playlist_tracks")
+    .select("*")
+    .in("playlist_id", playlistIds)
+    .gt("last_position_sec", 30)
+    .not("last_played_at", "is", null)
+    .order("last_played_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !track) {
+    return null;
+  }
+
+  const { data: playlist } = await supabase
+    .from("playlists")
+    .select("*")
+    .eq("id", track.playlist_id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!playlist) {
+    return null;
+  }
+
+  return {
+    playlist: playlist as Playlist,
+    track: track as PlaylistTrack,
+  };
+}

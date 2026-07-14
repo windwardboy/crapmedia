@@ -19,6 +19,8 @@ type TransportControlsProps = {
   onTogglePlay: () => void;
   onToggleShuffle: () => void;
   onToggleLoop: () => void;
+  rateLabel?: string;
+  onCycleRate?: () => void;
   size?: "default" | "large";
 };
 
@@ -48,6 +50,8 @@ export function TransportControls({
   onTogglePlay,
   onToggleShuffle,
   onToggleLoop,
+  rateLabel,
+  onCycleRate,
   size = "default",
 }: TransportControlsProps) {
   const s = sizes[size];
@@ -91,6 +95,8 @@ export function TransportControls({
         loop={loop}
         onToggleShuffle={onToggleShuffle}
         onToggleLoop={onToggleLoop}
+        rateLabel={rateLabel}
+        onCycleRate={onCycleRate}
         size={size}
       />
     </div>

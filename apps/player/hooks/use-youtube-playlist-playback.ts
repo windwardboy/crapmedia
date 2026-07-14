@@ -24,8 +24,12 @@ function shuffleIndicesAvoidFirst(length: number, avoidIndex: number): number[] 
   return order;
 }
 
-export function useYoutubePlaylistPlayback(tracks: PlaylistTrack[]) {
-  const [index, setIndex] = useState(0);
+export function useYoutubePlaylistPlayback(
+  tracks: PlaylistTrack[],
+  options?: { startTrackId?: string },
+) {
+  const initialIndex = tracks.findIndex((t) => t.id === options?.startTrackId);
+  const [index, setIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
   const [playing, setPlaying] = useState(false);
   const [shuffle, setShuffle] = useState(false);
   const [loop, setLoop] = useState(false);
