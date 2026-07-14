@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
-import { YouTubePlayer } from "@/components/youtube/youtube-player";
+import { useCallback, useRef, useState } from "react";
+import {
+  YouTubePlayer,
+  type YouTubePlayerHandle,
+} from "@/components/youtube/youtube-player";
 import type { PlaylistTrack } from "@/lib/playlists/types";
 
 function videoIdFromTrack(track: PlaylistTrack): string | null {
@@ -21,31 +24,65 @@ export function PlaylistListenClient({
   startIndex?: number;
 }) {
   const [index, setIndex] = useState(startIndex);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(false);
+  const playerRef = useRef<YouTubePlayerHandle>(null);
 
   const track = tracks[index];
   const videoId = track ? videoIdFromTrack(track) : null;
 
+  const loadTrack = useCallback(
+    (nextIndex: number, autoplay: boolean) => {
+      const t = tracks[nextIndex];
+      const vid = t ? videoIdFromTrack(t) : null;
+      if (!vid) return;
+      setIndex(nextIndex);
+      setPlaying(autoplay);
+      if (autoplay) {
+        playerRef.current?.loadAndPlay(vid, t.last_position_sec ?? 0);
+      }
+    },
+    [tracks],
+  );
+
   const goNext = useCallback(() => {
-    setIndex((i) => Math.min(i + 1, tracks.length - 1));
-    setPlaying(true);
-  }, [tracks.length]);
+    if (index >= tracks.length - 1) return;
+    loadTrack(index + 1, true);
+  }, [index, tracks.length, loadTrack]);
 
   const goPrev = useCallback(() => {
-    setIndex((i) => Math.max(i - 1, 0));
-    setPlaying(true);
-  }, []);
+    if (index <= 0) return;
+    loadTrack(index - 1, true);
+  }, [index, loadTrack]);
+
+  const togglePlay = useCallback(() => {
+    if (!playing) {
+      setPlaying(true);
+      if (videoId) {
+        playerRef.current?.loadAndPlay(
+          videoId,
+          track?.last_position_sec ?? 0,
+        );
+      } else {
+        playerRef.current?.play();
+      }
+    } else {
+      setPlaying(false);
+      playerRef.current?.pause();
+    }
+  }, [playing, videoId, track?.last_position_sec]);
 
   if (!track || !videoId) {
     return (
-      <p className="text-cm-text-muted">No playable YouTube tracks in this list.</p>
+      <p className="text-cm-text-muted">
+        No playable YouTube tracks in this list.
+      </p>
     );
   }
 
   return (
     <div className="space-y-8">
       <YouTubePlayer
-        key={`${videoId}-${index}`}
+        ref={playerRef}
         videoId={videoId}
         playing={playing}
         startSeconds={track.last_position_sec ?? 0}
@@ -61,6 +98,11 @@ export function PlaylistListenClient({
         <p className="mt-1 text-sm text-cm-text-muted">
           {index + 1} of {tracks.length}
         </p>
+        {!playing ? (
+          <p className="mt-2 text-xs text-cm-text-muted">
+            Tap play below to start (browser autoplay rules).
+          </p>
+        ) : null}
       </div>
 
       <div className="flex items-center justify-center gap-4">
@@ -75,7 +117,7 @@ export function PlaylistListenClient({
         </button>
         <button
           type="button"
-          onClick={() => setPlaying((p) => !p)}
+          onClick={togglePlay}
           className="cm-btn cm-btn-primary h-16 w-16 text-2xl"
           aria-label={playing ? "Pause" : "Play"}
         >

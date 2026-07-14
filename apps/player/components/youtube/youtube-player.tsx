@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+} from "react";
 
 type YTPlayer = {
   playVideo: () => void;
   pauseVideo: () => void;
+  loadVideoById: (videoId: string, startSeconds?: number) => void;
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
   getCurrentTime: () => number;
   destroy: () => void;
@@ -61,24 +68,65 @@ function loadYoutubeApi(): Promise<void> {
   return apiLoading;
 }
 
-export function YouTubePlayer({
-  videoId,
-  playing,
-  startSeconds = 0,
-  onEnded,
-  className,
-}: {
+export type YouTubePlayerHandle = {
+  loadAndPlay: (videoId: string, startSeconds?: number) => void;
+  play: () => void;
+  pause: () => void;
+};
+
+type PendingLoad = {
   videoId: string;
-  playing: boolean;
-  startSeconds?: number;
-  onEnded?: () => void;
-  className?: string;
-}) {
+  startSeconds: number;
+  autoplay: boolean;
+};
+
+export const YouTubePlayer = forwardRef<
+  YouTubePlayerHandle,
+  {
+    videoId: string;
+    playing: boolean;
+    startSeconds?: number;
+    onEnded?: () => void;
+    className?: string;
+  }
+>(function YouTubePlayer(
+  { videoId, playing, startSeconds = 0, onEnded, className },
+  ref,
+) {
   const elementId = useId().replace(/:/g, "");
   const playerRef = useRef<YTPlayer | null>(null);
   const readyRef = useRef(false);
+  const playingRef = useRef(playing);
   const onEndedRef = useRef(onEnded);
+  const pendingRef = useRef<PendingLoad | null>(null);
+
+  playingRef.current = playing;
   onEndedRef.current = onEnded;
+
+  function applyLoad(load: PendingLoad) {
+    const player = playerRef.current;
+    if (!player || !readyRef.current) {
+      pendingRef.current = load;
+      return;
+    }
+    player.loadVideoById(load.videoId, load.startSeconds);
+    if (load.autoplay) {
+      player.playVideo();
+    }
+    pendingRef.current = null;
+  }
+
+  useImperativeHandle(ref, () => ({
+    loadAndPlay(videoId: string, startSeconds = 0) {
+      applyLoad({ videoId, startSeconds, autoplay: true });
+    },
+    play() {
+      playerRef.current?.playVideo();
+    },
+    pause() {
+      playerRef.current?.pauseVideo();
+    },
+  }));
 
   useEffect(() => {
     let cancelled = false;
@@ -87,7 +135,6 @@ export function YouTubePlayer({
       await loadYoutubeApi();
       if (cancelled || !window.YT) return;
 
-      playerRef.current?.destroy();
       playerRef.current = new window.YT.Player(elementId, {
         videoId,
         playerVars: {
@@ -99,6 +146,11 @@ export function YouTubePlayer({
         events: {
           onReady: () => {
             readyRef.current = true;
+            if (pendingRef.current) {
+              applyLoad(pendingRef.current);
+            } else if (playingRef.current) {
+              playerRef.current?.playVideo();
+            }
           },
           onStateChange: (event) => {
             if (
@@ -119,8 +171,11 @@ export function YouTubePlayer({
       playerRef.current?.destroy();
       playerRef.current = null;
       readyRef.current = false;
+      pendingRef.current = null;
     };
-  }, [videoId, elementId, startSeconds]);
+    // Only create the iframe once; track changes use loadVideoById via ref.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [elementId]);
 
   useEffect(() => {
     if (!readyRef.current || !playerRef.current) return;
@@ -135,4 +190,4 @@ export function YouTubePlayer({
       <div id={elementId} className="h-full w-full" />
     </div>
   );
-}
+});
