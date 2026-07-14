@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { WaveBars } from "@crapmedia/ui";
+import { usePlaybackProgress } from "@/hooks/use-playback-progress";
 import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
 import { YouTubePlayer } from "@/components/youtube/youtube-player";
+import { formatDuration } from "@/lib/youtube/duration";
 import type { Playlist, PlaylistTrack } from "@/lib/playlists/types";
 
 export function DrivePlayer({
@@ -26,6 +28,13 @@ export function DrivePlayer({
     hasNext,
     hasPrev,
   } = useYoutubePlaylistPlayback(tracks);
+
+  const { current, duration, percent } = usePlaybackProgress(
+    playerRef,
+    playing,
+    `${videoId ?? ""}-${index}`,
+    track?.duration_sec,
+  );
 
   const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
 
@@ -134,7 +143,27 @@ export function DrivePlayer({
           </button>
         </div>
 
-        <p className="mt-8 max-w-sm text-center text-xs text-cm-text-muted">
+        <div className="mt-8 w-full max-w-xs">
+          <div
+            className="h-1.5 overflow-hidden rounded-full bg-cm-bg-subtle"
+            role="progressbar"
+            aria-valuenow={Math.round(percent)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Playback progress"
+          >
+            <div
+              className="h-full rounded-full bg-cm-accent transition-[width] duration-300 ease-linear"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+          <div className="mt-2 flex justify-between text-xs text-cm-text-muted tabular-nums">
+            <span>{formatDuration(Math.round(current))}</span>
+            <span>{formatDuration(duration > 0 ? Math.round(duration) : null)}</span>
+          </div>
+        </div>
+
+        <p className="mt-6 max-w-sm text-center text-xs text-cm-text-muted">
           {!playing
             ? "Tap play to start."
             : wakeLock

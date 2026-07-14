@@ -14,6 +14,7 @@ type YTPlayer = {
   loadVideoById: (videoId: string, startSeconds?: number) => void;
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
   getCurrentTime: () => number;
+  getDuration: () => number;
   destroy: () => void;
 };
 
@@ -72,6 +73,7 @@ export type YouTubePlayerHandle = {
   loadAndPlay: (videoId: string, startSeconds?: number) => void;
   play: () => void;
   pause: () => void;
+  getProgress: () => { current: number; duration: number } | null;
 };
 
 type PendingLoad = {
@@ -125,6 +127,20 @@ export const YouTubePlayer = forwardRef<
     },
     pause() {
       playerRef.current?.pauseVideo();
+    },
+    getProgress() {
+      const player = playerRef.current;
+      if (!player || !readyRef.current) return null;
+      try {
+        const duration = player.getDuration();
+        const current = player.getCurrentTime();
+        if (!Number.isFinite(duration) || !Number.isFinite(current)) {
+          return null;
+        }
+        return { current, duration };
+      } catch {
+        return null;
+      }
     },
   }));
 
