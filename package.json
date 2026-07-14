@@ -1,0 +1,21 @@
+{
+  "name": "crapmedia",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=@crapmedia/web",
+    "dev:player": "turbo dev --filter=@crapmedia/player",
+    "build": "turbo build",
+    "sync:brand": "node scripts/sync-brand.mjs",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "pnpm@9.12.2",
+  "engines": {
+    "node": ">=20"
+  }
+}

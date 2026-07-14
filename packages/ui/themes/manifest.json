@@ -1,0 +1,6 @@
+{
+  "bundled": [
+    { "id": "charcoal", "default": true },
+    { "id": "stone", "default": false }
+  ]
+}

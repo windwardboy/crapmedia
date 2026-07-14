@@ -1,0 +1,8 @@
+{
+  "id": "stone",
+  "name": "Stone",
+  "description": "Warm charcoal with green accent — easy on the eyes for long sessions",
+  "author": "CrapMedia",
+  "version": "1.0.0",
+  "default": false
+}

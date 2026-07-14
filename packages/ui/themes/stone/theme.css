@@ -1,0 +1,21 @@
+/**
+ * CrapMedia bundled skin — Stone (Warm)
+ *
+ * Warm grey-brown charcoal for long listening sessions.
+ * Pairs with the same accent green as Charcoal.
+ */
+:root,
+[data-theme="stone"] {
+  --cm-bg: #2a2826;
+  --cm-bg-elevated: #353230;
+  --cm-bg-subtle: #201e1c;
+  --cm-accent: #00b87a;
+  --cm-accent-hover: #00cf8c;
+  --cm-accent-muted: rgb(0 184 122 / 0.18);
+  --cm-accent-on: #ffffff;
+  --cm-text: #eceae8;
+  --cm-text-muted: #a8a29e;
+  --cm-border: #454240;
+  --cm-danger: #ef5f5f;
+  --cm-focus-ring: rgb(0 184 122 / 0.45);
+}

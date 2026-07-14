@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Charcoal skin preview</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--cm-bg);
+      color: var(--cm-text);
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    h1 { font-size: 1.25rem; margin: 0 0 0.25rem; }
+    .sub { color: var(--cm-text-muted); font-size: 0.875rem; margin-bottom: 1.5rem; }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      max-width: 720px;
+    }
+    .card {
+      background: var(--cm-bg-elevated);
+      border: 1px solid var(--cm-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .card.warm {
+      --cm-bg: #2a2826;
+      --cm-bg-elevated: #353230;
+      --cm-bg-subtle: #201e1c;
+      --cm-border: #454240;
+      --cm-text-muted: #a8a29e;
+    }
+    .track { font-weight: 600; margin: 0 0 0.25rem; }
+    .artist { color: var(--cm-text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+    .wave {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 32px;
+      margin-bottom: 1.25rem;
+    }
+    .wave span {
+      flex: 1;
+      background: var(--cm-accent);
+      border-radius: 2px;
+      animation: pulse 1.2s ease-in-out infinite;
+      opacity: 0.85;
+    }
+    .wave span:nth-child(2) { animation-delay: 0.15s; height: 60%; }
+    .wave span:nth-child(3) { animation-delay: 0.3s; height: 100%; }
+    .wave span:nth-child(4) { animation-delay: 0.45s; height: 45%; }
+    .wave span:nth-child(5) { animation-delay: 0.6s; height: 75%; }
+    @keyframes pulse {
+      0%, 100% { transform: scaleY(0.35); }
+      50% { transform: scaleY(1); }
+    }
+    .controls { display: flex; gap: 0.75rem; justify-content: center; }
+    button {
+      background: var(--cm-accent);
+      color: var(--cm-accent-on, #fff);
+      border: none;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    button:hover { background: var(--cm-accent-hover); }
+    button.ghost {
+      background: var(--cm-bg-subtle);
+      color: var(--cm-text);
+      border: 1px solid var(--cm-border);
+    }
+    .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--cm-accent);
+      margin-bottom: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bundled skins preview</h1>
+  <p class="sub">Charcoal (default) + Stone — shared accent #00B87A</p>
+  <div class="grid">
+    <div class="card">
+      <div class="label">Cool slate — default</div>
+      <p class="track">Joyride</p>
+      <p class="artist">Roxette</p>
+      <div class="wave" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="controls">
+        <button type="button" class="ghost">⏮</button>
+        <button type="button">⏸</button>
+        <button type="button" class="ghost">⏭</button>
+      </div>
+    </div>
+    <div class="card warm">
+      <div class="label">Warm stone — alt</div>
+      <p class="track">Chapter 12</p>
+      <p class="artist">Audiobook</p>
+      <div class="wave" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="controls">
+        <button type="button" class="ghost">⏮</button>
+        <button type="button">⏸</button>
+        <button type="button" class="ghost">⏭</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

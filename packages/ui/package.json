@@ -1,0 +1,25 @@
+{
+  "name": "@crapmedia/ui",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./themes/charcoal": "./themes/charcoal/theme.css",
+    "./themes/stone": "./themes/stone/theme.css",
+    "./themes/manifest": "./themes/manifest.json"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@crapmedia/typescript-config": "workspace:*",
+    "@types/react": "^19.1.8",
+    "react": "^19.1.0",
+    "typescript": "^5.8.3"
+  }
+}

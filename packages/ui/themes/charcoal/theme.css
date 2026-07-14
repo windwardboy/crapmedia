@@ -1,0 +1,21 @@
+/**
+ * CrapMedia default theme — Charcoal (Cool Slate)
+ *
+ * Neutral-cool charcoal base so #00B87A reads clearly in sunlight and on OLED.
+ * See docs/THEMING.md for variants we considered.
+ */
+:root,
+[data-theme="charcoal"] {
+  --cm-bg: #242628;
+  --cm-bg-elevated: #2e3136;
+  --cm-bg-subtle: #1a1c1e;
+  --cm-accent: #00b87a;
+  --cm-accent-hover: #00cf8c;
+  --cm-accent-muted: rgb(0 184 122 / 0.18);
+  --cm-accent-on: #ffffff;
+  --cm-text: #eceeef;
+  --cm-text-muted: #9ca3af;
+  --cm-border: #3a3f44;
+  --cm-danger: #ef5f5f;
+  --cm-focus-ring: rgb(0 184 122 / 0.45);
+}

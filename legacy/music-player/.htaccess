@@ -1,0 +1,14 @@
+# Deny access to sensitive files and directories
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<FilesMatch "\.(json)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+Options +FollowSymLinks -Indexes
+
+# You might need rewrite rules if you want cleaner URLs, but start without them

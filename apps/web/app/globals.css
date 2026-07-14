@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-cm-bg: var(--cm-bg);
+  --color-cm-bg-elevated: var(--cm-bg-elevated);
+  --color-cm-accent: var(--cm-accent);
+  --color-cm-text: var(--cm-text);
+  --color-cm-text-muted: var(--cm-text-muted);
+  --color-cm-border: var(--cm-border);
+}
+
+body {
+  background: var(--cm-bg);
+  color: var(--cm-text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.cm-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--cm-accent);
+  color: var(--cm-accent-on, #fff);
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+
+.cm-btn-primary:hover {
+  background: var(--cm-accent-hover);
+}
+
+.cm-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid var(--cm-border);
+  color: var(--cm-text);
+  font-weight: 600;
+}
+
+.cm-btn-ghost:hover {
+  background: var(--cm-bg-subtle);
+}

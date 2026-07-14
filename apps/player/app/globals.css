@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-cm-bg: var(--cm-bg);
+  --color-cm-bg-elevated: var(--cm-bg-elevated);
+  --color-cm-bg-subtle: var(--cm-bg-subtle);
+  --color-cm-accent: var(--cm-accent);
+  --color-cm-accent-hover: var(--cm-accent-hover);
+  --color-cm-text: var(--cm-text);
+  --color-cm-text-muted: var(--cm-text-muted);
+  --color-cm-border: var(--cm-border);
+}
+
+body {
+  background: var(--cm-bg);
+  color: var(--cm-text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+/* Lightweight driving-mode wave (no Web Audio) */
+.wave-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 2rem;
+}
+
+.wave-bars span {
+  flex: 1;
+  max-width: 6px;
+  background: var(--cm-accent);
+  border-radius: 2px;
+  transform-origin: bottom;
+  animation: cm-wave 1.2s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+.wave-bars span:nth-child(1) {
+  animation-delay: 0s;
+}
+.wave-bars span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.wave-bars span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.wave-bars span:nth-child(4) {
+  animation-delay: 0.45s;
+}
+.wave-bars span:nth-child(5) {
+  animation-delay: 0.6s;
+}
+
+.wave-bars span:nth-child(1),
+.wave-bars span:nth-child(5) {
+  height: 40%;
+}
+.wave-bars span:nth-child(2),
+.wave-bars span:nth-child(4) {
+  height: 65%;
+}
+.wave-bars span:nth-child(3) {
+  height: 100%;
+}
+
+@keyframes cm-wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.wave-bars.paused span {
+  animation: none;
+  transform: scaleY(0.25);
+  opacity: 0.35;
+}
+
+.cm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: background-color 0.15s, transform 0.1s;
+}
+
+.cm-btn:active {
+  transform: scale(0.96);
+}
+
+.cm-btn-primary {
+  background: var(--cm-accent);
+  color: var(--cm-accent-on, #fff);
+}
+
+.cm-btn-primary:hover {
+  background: var(--cm-accent-hover);
+}
+
+.cm-btn-ghost {
+  background: var(--cm-bg-subtle);
+  color: var(--cm-text);
+  border: 1px solid var(--cm-border);
+}
+
+.cm-card {
+  background: var(--cm-bg-elevated);
+  border: 1px solid var(--cm-border);
+  border-radius: 0.75rem;
+}

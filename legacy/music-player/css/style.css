@@ -1,0 +1,475 @@
+/* css/style.css - Dark Mode Theme */
+:root {
+    /* Define Dark Mode Colors */
+    --bg-main: #1a1a1a;         /* Very dark background */
+    --bg-container: #2b2b2b;    /* Slightly lighter container background */
+    --bg-control: #333;         /* Control panel background */
+    --bg-list-item: #383838;    /* List item background */
+    --bg-list-hover: #4a4a4a;    /* List item hover */
+    --bg-list-playing: #004346; /* Playing item background (dark teal) */
+    --text-primary: #e0e0e0;    /* Primary light text */
+    --text-secondary: #b0b0b0;  /* Secondary/dimmer text */
+    --text-playing: #70e0e6;    /* Playing item text (light teal) */
+    --border-color: #444;       /* Border color */
+    --accent-color: #00adb5;     /* Main accent color (teal) */
+    --accent-hover: #007a7f;    /* Accent hover */
+    --danger-bg: #5c2727;       /* Delete button background */
+    --danger-hover: #7a3535;    /* Delete button hover */
+    --danger-text: #f5c5c5;     /* Delete button text */
+    --waveform-bg: #3a3a3a;     /* Waveform container bg */
+    --waveform-wave: #70e0e6;   /* Waveform wave color (adjust in JS if needed) */
+    --waveform-progress: #007a7f; /* Waveform progress color (adjust in JS if needed) */
+    --input-bg: #333;
+    --input-border: #555;
+    --input-text: #e0e0e0;
+    --button-bg: #444;
+    --button-hover: #555;
+    --button-text: #e0e0e0;
+}
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+header {
+    background-color: var(--bg-control);
+    color: var(--text-primary);
+    padding: 0.8em 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.4em;
+    color: var(--accent-color); /* Use accent for title */
+}
+
+header a { /* Logout Link */
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 0.5em 0.8em;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+header a:hover {
+    background-color: var(--button-hover);
+    border-color: var(--accent-color);
+}
+
+main.player-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--bg-container);
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    border-radius: 5px;
+}
+
+.login-container {
+     max-width: 400px;
+     margin: 50px auto;
+     padding: 25px;
+     border: 1px solid var(--border-color);
+     background-color: var(--bg-container);
+     text-align: center;
+     border-radius: 5px;
+     box-shadow: 0 0 15px rgba(0,0,0,0.3);
+ }
+.login-container label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+.login-container input[type="password"] {
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 1em;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--input-text);
+    border-radius: 4px;
+}
+.login-container button {
+    padding: 12px 25px;
+    cursor: pointer;
+    font-size: 1em;
+    background-color: var(--accent-color);
+    color: var(--bg-main);
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+.login-container button:hover {
+    background-color: var(--accent-hover);
+}
+.login-container .error {
+    color: #ff8f8f; /* Light red for errors */
+    margin-top: 15px;
+}
+
+.player-controls {
+    background-color: var(--bg-control);
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+#now-playing {
+    font-weight: bold;
+    margin-bottom: 15px;
+    min-height: 1.2em;
+    word-wrap: break-word;
+    color: var(--accent-color); /* Highlight current track */
+}
+
+/* ADD styles for the GIF container and image */
+.visualizer-container {
+    margin: 20px auto; /* Center horizontally */
+    max-width: 80%;    /* Control max width */
+    height: 100px;      /* Set a fixed height (adjust as needed) */
+    display: flex;     /* Help center the image if needed */
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;   /* Hide parts of image if it's too big */
+    background-color: var(--waveform-bg); /* Optional: Keep bg color */
+    border-radius: 4px;
+}
+
+#visualizer-gif {
+    display: block;    /* Remove extra space below image */
+    max-height: 100%;  /* Ensure image fits container height */
+    max-width: 100%;   /* Ensure image fits container width */
+    object-fit: cover; /* Or 'contain', decides how image scales */
+                       /* 'cover' fills the container, cropping if needed */
+                       /* 'contain' shows the whole image, possibly letterboxed */
+}
+
+/* Adjust height for mobile if needed */
+@media screen and (max-width: 768px) {
+    .visualizer-container {
+         height: 80px; /* Smaller height on mobile */
+         max-width: 95%;
+     }
+}
+
+/* Note: Waveform colors are often best set in JS, but CSS can style the container */
+/* Find WaveSurfer.create in player.js and update waveColor/progressColor if needed */
+
+.controls-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.controls-buttons button {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.1em;
+    border: 1px solid var(--border-color);
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+.controls-buttons button:hover {
+    background-color: var(--button-hover);
+}
+
+.controls-buttons label[for="volume-slider"] {
+    margin: 0 5px 0 15px;
+    color: var(--text-secondary);
+}
+
+.controls-buttons input[type=range] {
+    width: 120px;
+    cursor: pointer;
+    vertical-align: middle;
+    /* Basic range styling for dark mode (might need browser prefixes) */
+    accent-color: var(--accent-color); /* Modern way to color slider thumb/track */
+}
+
+button#shuffle-btn.active {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+}
+
+.time-info {
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+.library-playlists {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.library, .playlists, .current-queue {
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 4px;
+    background-color: var(--bg-container);
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 1.25em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+#track-list, #current-queue-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 350px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background-color: var(--bg-list-item);
+}
+
+#track-list li, #current-queue-list li {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95em;
+    color: var(--text-primary);
+    transition: background-color 0.2s ease;
+}
+
+#track-list li:last-child, #current-queue-list li:last-child {
+    border-bottom: none;
+}
+
+#track-list li:hover, #current-queue-list li:hover {
+    background-color: var(--bg-list-hover);
+}
+
+#current-queue-list li.playing {
+    background-color: var(--bg-list-playing);
+    font-weight: bold;
+    color: var(--text-playing);
+    border-left: 3px solid var(--accent-color); /* Add indicator */
+    padding-left: 9px; /* Adjust padding for border */
+}
+
+.add-queue-btn {
+    padding: 4px 8px;
+    font-size: 0.85em;
+    margin-left: 10px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border-radius: 3px;
+    white-space: nowrap;
+}
+.add-queue-btn:hover {
+    background-color: var(--button-hover);
+}
+
+.playlists select, .playlists input[type="text"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    font-size: 1em;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--input-text);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+/* Style placeholder text */
+.playlists input[type="text"]::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+.playlists select {
+    /* Basic select styling */
+    appearance: none; /* Remove default arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23b0b0b0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: .65em auto;
+}
+.playlists select option { /* Style dropdown options */
+    background-color: var(--input-bg);
+    color: var(--input-text);
+}
+
+
+.playlists button {
+    display: block;
+    width: 100%;
+     margin-bottom: 10px;
+     padding: 10px 12px;
+     font-size: 1em;
+     cursor: pointer;
+     border: 1px solid var(--border-color);
+     background-color: var(--button-bg);
+     color: var(--button-text);
+     border-radius: 4px;
+     box-sizing: border-box;
+     transition: background-color 0.2s ease;
+}
+.playlists button:hover {
+     background-color: var(--button-hover);
+}
+/* Save button styling */
+#save-playlist-btn {
+    background-color: var(--accent-color);
+    color: var(--bg-main);
+    border-color: var(--accent-color);
+}
+#save-playlist-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+button#delete-playlist-btn {
+    background-color: var(--danger-bg);
+    border-color: var(--danger-bg);
+    color: var(--danger-text);
+}
+button#delete-playlist-btn:hover {
+    background-color: var(--danger-hover);
+}
+
+.playlists hr {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 15px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+
+/* ========================================= */
+/* Responsive Styles (Mobile / Smaller Screens) */
+/* ========================================= */
+@media screen and (max-width: 768px) {
+
+    body {
+        font-size: 15px;
+    }
+
+    header {
+        padding: 0.8em;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    header h1 {
+        font-size: 1.3em;
+    }
+    header a {
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    main.player-container {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .library-playlists {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    #track-list, #current-queue-list {
+        max-height: 250px;
+    }
+
+    #track-list li, #current-queue-list li {
+        padding: 8px 10px;
+        font-size: 0.9em;
+    }
+    #current-queue-list li.playing {
+        padding-left: 7px; /* Adjust for border */
+    }
+
+    .add-queue-btn {
+        padding: 3px 6px;
+        font-size: 0.8em;
+    }
+
+    .controls-buttons button {
+        padding: 8px 12px;
+        font-size: 1em;
+    }
+
+    .controls-buttons label[for="volume-slider"] {
+        margin-left: 5px;
+    }
+     .controls-buttons input[type=range] {
+        width: 100px;
+    }
+
+    #waveform {
+        min-height: 60px;
+    }
+
+    h2 {
+        font-size: 1.15em;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+    }
+
+    .login-container {
+        width: 90%;
+        margin: 30px auto;
+    }
+}
+
+/* Optional: Further adjustments for very small screens */
+@media screen and (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+     header h1 {
+        font-size: 1.2em;
+    }
+     h2 {
+        font-size: 1.1em;
+    }
+     .controls-buttons button {
+        padding: 6px 10px;
+    }
+     .controls-buttons input[type=range] {
+        width: 90px;
+    }
+     #track-list li, #current-queue-list li {
+        font-size: 0.85em;
+    }
+}

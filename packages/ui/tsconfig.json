@@ -1,0 +1,7 @@
+{
+  "extends": "@crapmedia/typescript-config/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx"
+  },
+  "include": ["src/**/*", "themes/**/*.json"]
+}
