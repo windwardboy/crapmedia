@@ -21,13 +21,14 @@ body {
 .wave-bars {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   gap: 4px;
   height: 2rem;
 }
 
 .wave-bars span {
-  flex: 1;
-  max-width: 6px;
+  flex: 0 0 6px;
+  width: 6px;
   background: var(--cm-accent);
   border-radius: 2px;
   transform-origin: bottom;

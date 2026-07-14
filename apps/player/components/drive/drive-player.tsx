@@ -110,7 +110,7 @@ export function DrivePlayer({
           {playlist.name} · {index + 1} of {tracks.length}
         </p>
 
-        <div className="my-10 w-full max-w-xs">
+        <div className="my-10 flex w-full justify-center">
           <WaveBars className={playing ? "" : "paused"} />
         </div>
 
