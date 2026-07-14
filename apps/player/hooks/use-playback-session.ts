@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { PlaybackErrorBanner } from "@/components/playback/playback-error-banner";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSavePlaybackPosition } from "@/hooks/use-save-playback-position";
 import type { YouTubePlayerHandle } from "@/components/youtube/youtube-player";
-import { youtubePlayerErrorMessage } from "@/lib/youtube/player-errors";
+import {
+  isAutoSkippablePlaybackError,
+  youtubePlayerErrorMessage,
+} from "@/lib/youtube/player-errors";
 import type { RefObject } from "react";
 
 type UsePlaybackSessionOptions = {
@@ -17,6 +19,7 @@ type UsePlaybackSessionOptions = {
   hasNext: boolean;
   goNext: () => void;
   cacheResume: (trackId: string, sec: number) => void;
+  trackCount: number;
 };
 
 export function usePlaybackSession({
@@ -29,8 +32,11 @@ export function usePlaybackSession({
   hasNext,
   goNext,
   cacheResume,
+  trackCount,
 }: UsePlaybackSessionOptions) {
   const [playbackError, setPlaybackError] = useState<string | null>(null);
+  const [skippedNotice, setSkippedNotice] = useState<string | null>(null);
+  const autoSkipCountRef = useRef(0);
   const { resetPosition } = useSavePlaybackPosition(
     trackId,
     playerRef,
@@ -40,14 +46,38 @@ export function usePlaybackSession({
 
   useEffect(() => {
     setPlaybackError(null);
+    setSkippedNotice(null);
   }, [videoId]);
+
+  useEffect(() => {
+    if (!playing || !videoId) return;
+    const id = window.setTimeout(() => {
+      autoSkipCountRef.current = 0;
+    }, 3000);
+    return () => window.clearTimeout(id);
+  }, [videoId, playing]);
 
   const onPlayerError = useCallback(
     (code: number) => {
+      const canAutoSkip =
+        isAutoSkippablePlaybackError(code) &&
+        hasNext &&
+        autoSkipCountRef.current < trackCount;
+
+      if (canAutoSkip) {
+        autoSkipCountRef.current += 1;
+        resetPosition();
+        setPlaybackError(null);
+        setSkippedNotice("Skipped unavailable track");
+        goNext();
+        return;
+      }
+
+      setSkippedNotice(null);
       setPlaybackError(youtubePlayerErrorMessage(code));
       setPlaying(false);
     },
-    [setPlaying],
+    [hasNext, trackCount, resetPosition, goNext, setPlaying],
   );
 
   const onEnded = useCallback(() => {
@@ -66,6 +96,7 @@ export function usePlaybackSession({
 
   return {
     playbackError,
+    skippedNotice,
     onPlayerError,
     onEnded,
     dismissError,

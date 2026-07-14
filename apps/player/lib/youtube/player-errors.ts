@@ -13,3 +13,7 @@ export function youtubePlayerErrorMessage(code: number): string {
       return "Playback error. Try skipping to the next track.";
   }
 }
+
+export function isAutoSkippablePlaybackError(code: number): boolean {
+  return code === 2 || code === 5 || code === 100 || code === 101 || code === 150;
+}

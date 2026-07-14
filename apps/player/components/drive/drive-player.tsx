@@ -43,6 +43,7 @@ export function DrivePlayer({
 
   const {
     playbackError,
+    skippedNotice,
     onPlayerError,
     onEnded,
     dismissError,
@@ -57,6 +58,7 @@ export function DrivePlayer({
     hasNext,
     goNext,
     cacheResume,
+    trackCount: tracks.length,
   });
 
   const { current, duration, percent } = usePlaybackProgress(
@@ -146,6 +148,9 @@ export function DrivePlayer({
         <p className="mt-1 text-sm text-cm-text-muted">
           {playlist.name} · {index + 1} of {tracks.length}
         </p>
+        {skippedNotice ? (
+          <p className="mt-2 text-sm text-cm-text-muted">{skippedNotice}</p>
+        ) : null}
 
         {playbackError ? (
           <div className="mt-6 w-full max-w-md">

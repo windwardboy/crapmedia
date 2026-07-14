@@ -47,6 +47,7 @@ export function PlaylistListenClient({
 
   const {
     playbackError,
+    skippedNotice,
     onPlayerError,
     onEnded,
     dismissError,
@@ -61,6 +62,7 @@ export function PlaylistListenClient({
     hasNext,
     goNext,
     cacheResume,
+    trackCount: tracks.length,
   });
 
   if (!track || !videoId) {
@@ -102,6 +104,9 @@ export function PlaylistListenClient({
         <p className="mt-1 text-sm text-cm-text-muted">
           {index + 1} of {tracks.length}
         </p>
+        {skippedNotice ? (
+          <p className="mt-2 text-xs text-cm-text-muted">{skippedNotice}</p>
+        ) : null}
         {!playing ? (
           <p className="mt-2 text-xs text-cm-text-muted">
             {resumeAt >= 30
