@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
 import { PlaylistListenClient } from "@/components/playlists/playlist-listen-client";
 import { getPlaylist } from "@/lib/playlists/queries";
+import { youtubeTracks } from "@/lib/playlists/track-utils";
 
 export default async function PlaylistListenPage({
   params,
@@ -28,7 +29,7 @@ export default async function PlaylistListenPage({
   }
 
   const { playlist, tracks } = result;
-  const youtubeTracks = tracks.filter((t) => t.source_type === "youtube");
+  const playable = youtubeTracks(tracks);
 
   return (
     <>
@@ -43,7 +44,7 @@ export default async function PlaylistListenPage({
         <div className="mt-6">
           <PlaylistListenClient
             playlistId={playlist.id}
-            tracks={youtubeTracks}
+            tracks={playable}
           />
         </div>
       </main>

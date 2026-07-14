@@ -40,7 +40,7 @@ export default function HomePage() {
             </div>
             <h2 className="mt-2 text-xl font-semibold">Driving mode</h2>
             <p className="mt-2 text-sm text-cm-text-muted">
-              Large controls, wake lock, and the bundled Charcoal / Stone skins.
+              Large controls, wake lock, and your default playlist — for the car.
             </p>
           </Link>
 

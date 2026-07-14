@@ -75,6 +75,50 @@ export async function getPlaylist(
   };
 }
 
+export async function getDrivingDefaultPlaylist(): Promise<{
+  playlist: Playlist;
+  tracks: PlaylistTrack[];
+} | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data: playlist, error } = await supabase
+    .from("playlists")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("is_driving_default", true)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!playlist) {
+    return null;
+  }
+
+  const { data: tracks, error: tracksError } = await supabase
+    .from("playlist_tracks")
+    .select("*")
+    .eq("playlist_id", playlist.id)
+    .order("position", { ascending: true });
+
+  if (tracksError) {
+    throw new Error(tracksError.message);
+  }
+
+  return {
+    playlist: playlist as Playlist,
+    tracks: (tracks ?? []) as PlaylistTrack[],
+  };
+}
+
 export async function requireUser(nextPath: string) {
   const supabase = await createClient();
   const {
