@@ -126,7 +126,7 @@ export function DrivePlayer({
               type="button"
               onClick={goPrev}
               disabled={!hasPrev}
-              className="cm-btn cm-btn-ghost h-16 w-16 text-2xl disabled:opacity-40"
+              className="cm-btn cm-btn-transparent h-16 w-16 text-2xl disabled:opacity-40"
               aria-label="Previous"
             >
               ⏮
@@ -134,7 +134,7 @@ export function DrivePlayer({
             <button
               type="button"
               onClick={togglePlay}
-              className="cm-btn cm-btn-primary h-20 w-20 text-3xl"
+              className="cm-btn cm-btn-transparent h-20 w-20 text-3xl"
               aria-label={playing ? "Pause" : "Play"}
             >
               {playing ? "⏸" : "▶"}
@@ -143,7 +143,7 @@ export function DrivePlayer({
               type="button"
               onClick={goNext}
               disabled={!hasNext}
-              className="cm-btn cm-btn-ghost h-16 w-16 text-2xl disabled:opacity-40"
+              className="cm-btn cm-btn-transparent h-16 w-16 text-2xl disabled:opacity-40"
               aria-label="Next"
             >
               ⏭

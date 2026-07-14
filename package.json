@@ -11,6 +11,8 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
+    "png-to-ico": "^2.1.8",
+    "sharp": "^0.34.2",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3"
   },

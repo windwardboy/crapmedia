@@ -17,10 +17,10 @@ export function PlaybackModeControls({
 }: PlaybackModeControlsProps) {
   const buttonClass =
     size === "large"
-      ? "cm-btn cm-btn-ghost h-14 w-14 text-xl"
-      : "cm-btn cm-btn-ghost h-11 w-11 text-base";
+      ? "cm-btn cm-btn-transparent h-14 w-14 text-xl"
+      : "cm-btn cm-btn-transparent h-11 w-11 text-base";
 
-  const activeClass = "ring-2 ring-cm-accent text-cm-accent";
+  const activeClass = "ring-2 ring-cm-accent text-cm-accent bg-transparent";
 
   return (
     <div className="flex items-center justify-center gap-2">

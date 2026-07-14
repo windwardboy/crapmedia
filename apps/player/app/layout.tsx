@@ -13,10 +13,6 @@ export const metadata: Metadata = {
     title: "CrapMedia",
     statusBarStyle: "black-translucent",
   },
-  icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
-  },
   manifest: "/manifest.webmanifest",
 };
 

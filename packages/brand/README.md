@@ -10,7 +10,7 @@ Sync to both apps:
 pnpm sync:brand
 ```
 
-Copies into `apps/player/public/` and `apps/web/public/` as `icon.png`, `favicon.png`, and PWA `icon-512.png`.
+Copies into `apps/player/public/`, `apps/web/public/`, and each app's `app/` folder (`favicon.ico`, `icon.png`, `apple-icon.png`) for Next.js metadata.
 
 ## Other files
 

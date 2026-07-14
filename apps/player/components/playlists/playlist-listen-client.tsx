@@ -72,7 +72,7 @@ export function PlaylistListenClient({
             type="button"
             onClick={goPrev}
             disabled={!hasPrev}
-            className="cm-btn cm-btn-ghost h-14 w-14 text-xl disabled:opacity-40"
+            className="cm-btn cm-btn-transparent h-14 w-14 text-xl disabled:opacity-40"
             aria-label="Previous"
           >
             ⏮
@@ -80,7 +80,7 @@ export function PlaylistListenClient({
           <button
             type="button"
             onClick={togglePlay}
-            className="cm-btn cm-btn-primary h-16 w-16 text-2xl"
+            className="cm-btn cm-btn-transparent h-16 w-16 text-2xl"
             aria-label={playing ? "Pause" : "Play"}
           >
             {playing ? "⏸" : "▶"}
@@ -89,7 +89,7 @@ export function PlaylistListenClient({
             type="button"
             onClick={goNext}
             disabled={!hasNext}
-            className="cm-btn cm-btn-ghost h-14 w-14 text-xl disabled:opacity-40"
+            className="cm-btn cm-btn-transparent h-14 w-14 text-xl disabled:opacity-40"
             aria-label="Next"
           >
             ⏭

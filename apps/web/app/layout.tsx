@@ -5,7 +5,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "CrapMedia",
   description: "Free, driving-friendly media playback. YouTube and your libraries.",
-  icons: { icon: "/icon.png" },
 };
 
 export const viewport: Viewport = {
