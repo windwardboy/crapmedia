@@ -7,6 +7,7 @@ import {
   setDrivingDefault,
   updatePlaylist,
 } from "@/app/playlists/actions";
+import { YoutubeTracksPanel } from "@/components/playlists/youtube-tracks-panel";
 import type { Playlist, PlaylistTrack } from "@/lib/playlists/types";
 
 export function PlaylistEditor({
@@ -80,8 +81,7 @@ export function PlaylistEditor({
           <div>
             <p className="font-medium">Default for driving mode</p>
             <p className="text-sm text-cm-text-muted">
-              Use this playlist when you open Drive (playback wiring comes
-              next).
+              Use this playlist when you open Drive.
             </p>
           </div>
           <input
@@ -94,26 +94,7 @@ export function PlaylistEditor({
         </label>
       </div>
 
-      <section>
-        <h2 className="mb-3 text-lg font-semibold">Tracks</h2>
-        {tracks.length === 0 ? (
-          <div className="cm-card p-6 text-sm text-cm-text-muted">
-            No tracks yet. YouTube import and add-by-URL land in the next step.
-          </div>
-        ) : (
-          <ol className="cm-card divide-y divide-cm-border">
-            {tracks.map((track, index) => (
-              <li
-                key={track.id}
-                className="flex items-center gap-3 px-4 py-3 text-sm"
-              >
-                <span className="w-6 text-cm-text-muted">{index + 1}</span>
-                <span className="flex-1 truncate">{track.title}</span>
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
+      <YoutubeTracksPanel playlist={playlist} tracks={tracks} />
 
       <div className="border-t border-cm-border pt-6">
         <button

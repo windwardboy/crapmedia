@@ -46,6 +46,13 @@ pnpm build
 
 After creating the Supabase project, run the SQL in [`supabase/migrations/001_playlists.sql`](../supabase/migrations/001_playlists.sql) via **SQL Editor** in the dashboard (creates `playlists` + `playlist_tracks` with RLS).
 
+## YouTube (player only)
+
+1. In [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Library** → enable **YouTube Data API v3**.
+2. **Credentials → Create credentials → API key** (restrict to YouTube Data API v3 if you like).
+3. Add `YOUTUBE_API_KEY` to the **player** Vercel project (and `apps/player/.env.local` for dev). **Do not** use `NEXT_PUBLIC_` — keep it server-side only.
+4. Redeploy the player after adding the key.
+
 ## Environment
 
 Copy `.env.example` in each app when Phase 1 adds Supabase / YouTube.

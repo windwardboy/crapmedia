@@ -53,7 +53,7 @@ export default function HomePage() {
             </div>
             <h2 className="mt-2 text-xl font-semibold">Playlists</h2>
             <p className="mt-2 text-sm text-cm-text-muted">
-              Create queues for listening. YouTube import lands next.
+              Create queues and import from YouTube.
             </p>
           </Link>
         </div>
