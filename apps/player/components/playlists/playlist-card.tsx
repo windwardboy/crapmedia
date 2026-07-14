@@ -5,6 +5,9 @@ export function PlaylistCard({ playlist }: { playlist: PlaylistWithTrackCount })
   const trackLabel =
     playlist.track_count === 1 ? "1 track" : `${playlist.track_count} tracks`;
   const canPlay = playlist.track_count > 0;
+  const playHref = playlist.is_driving_default
+    ? "/drive"
+    : `/playlists/${playlist.id}/listen`;
 
   return (
     <div className="cm-card flex h-full flex-col p-5">
@@ -26,7 +29,7 @@ export function PlaylistCard({ playlist }: { playlist: PlaylistWithTrackCount })
       <div className="mt-4 flex gap-2">
         {canPlay ? (
           <Link
-            href={`/playlists/${playlist.id}/listen`}
+            href={playHref}
             className="cm-btn cm-btn-primary flex-1 py-2.5 text-center text-sm"
           >
             Play now
