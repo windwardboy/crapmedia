@@ -5,6 +5,9 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
+    "@crapmedia/ui#build": {
+      "outputs": []
+    },
     "dev": {
       "cache": false,
       "persistent": true
