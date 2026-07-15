@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AppNav } from "@/components/app-nav";
+import { AppNavShell } from "@/components/app-nav-shell";
 import { CreatePlaylistForm } from "@/components/playlists/create-playlist-form";
 import { PlaylistCard } from "@/components/playlists/playlist-card";
 import { SignInPrompt } from "@/components/playlists/sign-in-prompt";
@@ -10,7 +10,7 @@ export default async function PlaylistsPage() {
 
   return (
     <>
-      <AppNav />
+      <AppNavShell />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>

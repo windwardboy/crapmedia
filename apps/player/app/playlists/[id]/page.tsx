@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { AppNav } from "@/components/app-nav";
+import { AppNavShell } from "@/components/app-nav-shell";
 import { PlaylistEditor } from "@/components/playlists/playlist-editor";
 import { getPlaylist } from "@/lib/playlists/queries";
 import { syncTrackEmbeddability } from "@/lib/youtube/sync-embeddability";
@@ -33,7 +33,7 @@ export default async function PlaylistDetailPage({
 
   return (
     <>
-      <AppNav />
+      <AppNavShell />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <Link
           href="/playlists"

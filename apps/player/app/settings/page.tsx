@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AppNav } from "@/components/app-nav";
+import { AppNavShell } from "@/components/app-nav-shell";
 import { AuthSection } from "@/components/auth-section";
 import { SkinPicker } from "@/components/skin-picker";
 import { isAdminUser } from "@/lib/admin/auth";
@@ -28,7 +28,7 @@ export default async function SettingsPage({
 
   return (
     <>
-      <AppNav />
+      <AppNavShell />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="mt-2 text-cm-text-muted">

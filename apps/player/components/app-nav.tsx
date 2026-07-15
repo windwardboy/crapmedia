@@ -4,12 +4,19 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-const links = [
+const baseLinks = [
   { href: "/", label: "Home" },
   { href: "/playlists", label: "Playlists" },
   { href: "/drive", label: "Drive" },
   { href: "/settings", label: "Settings" },
 ];
+
+const adminLink = { href: "/admin", label: "Admin" };
+
+function navLinks(showAdmin: boolean) {
+  if (!showAdmin) return baseLinks;
+  return [...baseLinks.slice(0, -1), adminLink, baseLinks[baseLinks.length - 1]];
+}
 
 function MenuIcon({ open }: { open: boolean }) {
   if (open) {
@@ -45,8 +52,9 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
-export function AppNav() {
+export function AppNav({ showAdmin = false }: { showAdmin?: boolean }) {
   const [open, setOpen] = useState(false);
+  const links = navLinks(showAdmin);
 
   return (
     <header className="border-b border-cm-border bg-cm-bg-elevated">

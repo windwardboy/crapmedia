@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { AppNav } from "@/components/app-nav";
+import { AppNavShell } from "@/components/app-nav-shell";
 import { ContinueListeningCard } from "@/components/continue-listening-card";
 import { PwaInstallHint } from "@/components/pwa-install-hint";
 import { SkinPickerLink } from "@/components/skin-picker";
@@ -11,7 +11,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <AppNav />
+      <AppNavShell />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="mb-8 flex items-start gap-4">
           <Image

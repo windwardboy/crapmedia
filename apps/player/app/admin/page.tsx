@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AppNav } from "@/components/app-nav";
+import { AppNavShell } from "@/components/app-nav-shell";
 import { createClient } from "@/lib/supabase/server";
 import { isAdminUser } from "@/lib/admin/auth";
 import {
@@ -48,7 +48,7 @@ export default async function AdminPage() {
 
   return (
     <>
-      <AppNav />
+      <AppNavShell />
       <main className="mx-auto max-w-4xl px-4 py-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
