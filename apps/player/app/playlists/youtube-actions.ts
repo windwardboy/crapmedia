@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionResult } from "@/lib/playlists/action-result";
 import {
+  EMBED_CHECK_VERSION,
   fetchPlaylistVideoIds,
   fetchVideoMetadata,
 } from "@/lib/youtube/api";
@@ -105,7 +106,11 @@ export async function addYoutubeTrack(
       playlist_id: playlistId,
       position,
       source_type: "youtube",
-      source_ref: { videoId, embeddable: video.embeddable },
+      source_ref: {
+        videoId,
+        embeddable: video.embeddable,
+        embedCheckVersion: EMBED_CHECK_VERSION,
+      },
       title: video.title,
       artist: video.channel,
       duration_sec: video.durationSec,
@@ -168,7 +173,11 @@ export async function importYoutubePlaylist(
         playlist_id: playlistId,
         position: position++,
         source_type: "youtube",
-        source_ref: { videoId, embeddable: video.embeddable },
+        source_ref: {
+          videoId,
+          embeddable: video.embeddable,
+          embedCheckVersion: EMBED_CHECK_VERSION,
+        },
         title: video.title,
         artist: video.channel,
         duration_sec: video.durationSec,

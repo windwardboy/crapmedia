@@ -1,22 +1,30 @@
 import { createClient } from "@/lib/supabase/server";
-import { fetchVideoMetadata } from "@/lib/youtube/api";
+import { EMBED_CHECK_VERSION, fetchVideoMetadata } from "@/lib/youtube/api";
 import type { PlaylistTrack } from "@/lib/playlists/types";
+
+type YoutubeSourceRef = {
+  videoId?: string;
+  embeddable?: boolean;
+  embedCheckVersion?: number;
+};
+
+function needsEmbeddabilityCheck(track: PlaylistTrack): boolean {
+  if (track.source_type !== "youtube") return false;
+  const ref = track.source_ref as YoutubeSourceRef;
+  return ref.embedCheckVersion !== EMBED_CHECK_VERSION;
+}
 
 export async function syncTrackEmbeddability(
   tracks: PlaylistTrack[],
 ): Promise<PlaylistTrack[]> {
-  const missing = tracks.filter((track) => {
-    if (track.source_type !== "youtube") return false;
-    const ref = track.source_ref as { embeddable?: boolean };
-    return typeof ref.embeddable !== "boolean";
-  });
+  const toCheck = tracks.filter(needsEmbeddabilityCheck);
 
-  if (missing.length === 0) {
+  if (toCheck.length === 0) {
     return tracks;
   }
 
-  const videoIds = missing
-    .map((track) => (track.source_ref as { videoId?: string }).videoId)
+  const videoIds = toCheck
+    .map((track) => (track.source_ref as YoutubeSourceRef).videoId)
     .filter((id): id is string => Boolean(id));
 
   if (videoIds.length === 0) {
@@ -33,16 +41,17 @@ export async function syncTrackEmbeddability(
   const supabase = await createClient();
   const updated = new Map(tracks.map((track) => [track.id, track]));
 
-  for (const track of missing) {
-    const videoId = (track.source_ref as { videoId?: string }).videoId;
+  for (const track of toCheck) {
+    const videoId = (track.source_ref as YoutubeSourceRef).videoId;
     if (!videoId) continue;
 
     const video = meta.get(videoId);
-    const embeddable = video?.embeddable ?? false;
+    const embeddable = video?.embeddable === true;
     const source_ref = {
       ...(track.source_ref as Record<string, unknown>),
       videoId,
       embeddable,
+      embedCheckVersion: EMBED_CHECK_VERSION,
     };
 
     await supabase

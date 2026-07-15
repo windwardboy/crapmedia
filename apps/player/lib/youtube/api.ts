@@ -1,5 +1,7 @@
 import { parseIso8601Duration } from "./duration";
 
+export const EMBED_CHECK_VERSION = 1;
+
 export type YoutubeVideoMeta = {
   videoId: string;
   title: string;
@@ -65,7 +67,7 @@ export async function fetchVideoMetadata(
   for (let i = 0; i < unique.length; i += batchSize) {
     const batch = unique.slice(i, i + batchSize);
     const data = await youtubeFetch<VideosResponse>("videos", {
-      part: "snippet,contentDetails",
+      part: "snippet,contentDetails,status",
       id: batch.join(","),
     });
 
@@ -82,7 +84,7 @@ export async function fetchVideoMetadata(
           item.snippet?.thumbnails?.medium?.url ??
           item.snippet?.thumbnails?.default?.url ??
           null,
-        embeddable: item.status?.embeddable ?? false,
+        embeddable: item.status?.embeddable === true,
       });
     }
   }
