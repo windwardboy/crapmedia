@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useActionState, useTransition } from "react";
+import { useActionState, useCallback, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   addYoutubeTrack,
@@ -10,9 +10,13 @@ import {
   moveTrack,
   removeTrack,
 } from "@/app/playlists/youtube-actions";
+import { EmbedCheckRunner } from "@/components/playlists/embed-check-runner";
 import type { ActionResult } from "@/lib/playlists/action-result";
 import type { Playlist, PlaylistTrack } from "@/lib/playlists/types";
-import { isTrackEmbedBlocked } from "@/lib/playlists/track-utils";
+import {
+  isTrackEmbedBlocked,
+  needsEmbedVerification,
+} from "@/lib/playlists/track-utils";
 import { formatDuration } from "@/lib/youtube/duration";
 
 function videoIdFromTrack(track: PlaylistTrack): string | null {
@@ -41,6 +45,12 @@ export function YoutubeTracksPanel({
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [clientBlockedIds, setClientBlockedIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const handleEmbedBlocked = useCallback((trackId: string) => {
+    setClientBlockedIds((prev) => new Set(prev).add(trackId));
+  }, []);
   const [addState, addAction, addPending] = useActionState(
     addYoutubeTrack.bind(null, playlist.id),
     null,
@@ -65,10 +75,14 @@ export function YoutubeTracksPanel({
   }
 
   const busy = pending || addPending || importPending;
-  const blockedTracks = tracks.filter(isTrackEmbedBlocked);
+  const checkingEmbeds = tracks.some(needsEmbedVerification);
+  const blockedTracks = tracks.filter(
+    (track) => isTrackEmbedBlocked(track) || clientBlockedIds.has(track.id),
+  );
 
   return (
     <section className="space-y-6">
+      <EmbedCheckRunner tracks={tracks} onBlocked={handleEmbedBlocked} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Tracks</h2>
         {tracks.length > 0 ? (
@@ -119,6 +133,12 @@ export function YoutubeTracksPanel({
         </form>
       </div>
 
+      {checkingEmbeds ? (
+        <p className="text-sm text-cm-text-muted" role="status">
+          Checking which tracks can play in the app…
+        </p>
+      ) : null}
+
       {blockedTracks.length > 0 ? (
         <div
           role="status"
@@ -140,7 +160,8 @@ export function YoutubeTracksPanel({
         <ol className="cm-card divide-y divide-cm-border">
           {tracks.map((track, index) => {
             const vid = videoIdFromTrack(track);
-            const blocked = isTrackEmbedBlocked(track);
+            const blocked =
+              isTrackEmbedBlocked(track) || clientBlockedIds.has(track.id);
             return (
               <li
                 key={track.id}

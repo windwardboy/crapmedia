@@ -17,3 +17,7 @@ export function youtubePlayerErrorMessage(code: number): string {
 export function isAutoSkippablePlaybackError(code: number): boolean {
   return code === 2 || code === 5 || code === 100 || code === 101 || code === 150;
 }
+
+export function isEmbedRestrictedPlaybackError(code: number): boolean {
+  return code === 101 || code === 150;
+}

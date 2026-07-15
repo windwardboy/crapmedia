@@ -6,11 +6,16 @@ type YoutubeSourceRef = {
   videoId?: string;
   embeddable?: boolean;
   embedCheckVersion?: number;
+  embedVerifiedInApp?: boolean;
+  embedBlockedByPlayback?: boolean;
 };
 
 function needsEmbeddabilityCheck(track: PlaylistTrack): boolean {
   if (track.source_type !== "youtube") return false;
   const ref = track.source_ref as YoutubeSourceRef;
+  if (ref.embedVerifiedInApp === true || ref.embedBlockedByPlayback === true) {
+    return false;
+  }
   return ref.embedCheckVersion !== EMBED_CHECK_VERSION;
 }
 

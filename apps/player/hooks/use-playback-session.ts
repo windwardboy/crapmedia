@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { markTrackEmbedBlocked } from "@/app/playlists/playback-actions";
 import { useSavePlaybackPosition } from "@/hooks/use-save-playback-position";
 import type { YouTubePlayerHandle } from "@/components/youtube/youtube-player";
 import {
   isAutoSkippablePlaybackError,
+  isEmbedRestrictedPlaybackError,
   youtubePlayerErrorMessage,
 } from "@/lib/youtube/player-errors";
 import type { RefObject } from "react";
@@ -59,6 +61,10 @@ export function usePlaybackSession({
 
   const onPlayerError = useCallback(
     (code: number) => {
+      if (isEmbedRestrictedPlaybackError(code) && trackId) {
+        void markTrackEmbedBlocked(trackId);
+      }
+
       const canAutoSkip =
         isAutoSkippablePlaybackError(code) &&
         hasNext &&
@@ -77,7 +83,7 @@ export function usePlaybackSession({
       setPlaybackError(youtubePlayerErrorMessage(code));
       setPlaying(false);
     },
-    [hasNext, trackCount, resetPosition, goNext, setPlaying],
+    [hasNext, trackCount, resetPosition, goNext, setPlaying, trackId],
   );
 
   const onEnded = useCallback(() => {
