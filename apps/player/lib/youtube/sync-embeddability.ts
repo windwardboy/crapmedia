@@ -1,5 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin/auth";
 import { EMBED_CHECK_VERSION, fetchVideoMetadata } from "@/lib/youtube/api";
+import {
+  checkImportLimit,
+  recordImportUsage,
+} from "@/lib/youtube/import-limits";
 import type { PlaylistTrack } from "@/lib/playlists/types";
 
 type YoutubeSourceRef = {
@@ -36,6 +41,20 @@ export async function syncTrackEmbeddability(
     return tracks;
   }
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    const limit = await checkImportLimit(supabase, user.id, videoIds.length, {
+      isAdmin: isAdminEmail(user.email),
+    });
+    if (!limit.ok) {
+      return tracks;
+    }
+  }
+
   let meta: Awaited<ReturnType<typeof fetchVideoMetadata>>;
   try {
     meta = await fetchVideoMetadata(videoIds);
@@ -43,7 +62,6 @@ export async function syncTrackEmbeddability(
     return tracks;
   }
 
-  const supabase = await createClient();
   const updated = new Map(tracks.map((track) => [track.id, track]));
 
   for (const track of toCheck) {
@@ -65,6 +83,10 @@ export async function syncTrackEmbeddability(
       .eq("id", track.id);
 
     updated.set(track.id, { ...track, source_ref });
+  }
+
+  if (user) {
+    await recordImportUsage(supabase, user.id, "embed_sync", videoIds.length);
   }
 
   return tracks.map((track) => updated.get(track.id) ?? track);

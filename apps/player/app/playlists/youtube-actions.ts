@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin/auth";
 import type { ActionResult } from "@/lib/playlists/action-result";
+import {
+  checkImportLimit,
+  recordImportUsage,
+} from "@/lib/youtube/import-limits";
 import {
   EMBED_CHECK_VERSION,
   fetchPlaylistVideoIds,
@@ -31,7 +36,7 @@ async function requireUserAndPlaylist(playlistId: string) {
     return { error: "Playlist not found." } as const;
   }
 
-  return { supabase, userId: user.id } as const;
+  return { supabase, userId: user.id, userEmail: user.email ?? null } as const;
 }
 
 async function nextPosition(
@@ -88,11 +93,15 @@ export async function addYoutubeTrack(
   const ctx = await requireUserAndPlaylist(playlistId);
   if ("error" in ctx) return { error: ctx.error };
 
-  const { supabase } = ctx;
+  const { supabase, userId, userEmail } = ctx;
+  const isAdmin = isAdminEmail(userEmail);
   const existing = await existingYoutubeIds(supabase, playlistId);
   if (existing.has(videoId)) {
     return { error: "That video is already in this playlist." };
   }
+
+  const limit = await checkImportLimit(supabase, userId, 1, { isAdmin });
+  if (!limit.ok) return { error: limit.error };
 
   try {
     const meta = await fetchVideoMetadata([videoId]);
@@ -119,6 +128,7 @@ export async function addYoutubeTrack(
 
     if (error) return { error: error.message };
 
+    await recordImportUsage(supabase, userId, "add_video", 1);
     revalidatePlaylist(playlistId);
     const blocked = video.embeddable
       ? ""
@@ -146,7 +156,8 @@ export async function importYoutubePlaylist(
   const ctx = await requireUserAndPlaylist(playlistId);
   if ("error" in ctx) return { error: ctx.error };
 
-  const { supabase } = ctx;
+  const { supabase, userId, userEmail } = ctx;
+  const isAdmin = isAdminEmail(userEmail);
 
   try {
     const videoIds = await fetchPlaylistVideoIds(ytPlaylistId);
@@ -159,6 +170,12 @@ export async function importYoutubePlaylist(
     if (toAdd.length === 0) {
       return { error: "All videos from that playlist are already here." };
     }
+
+    const limit = await checkImportLimit(supabase, userId, toAdd.length, {
+      isAdmin,
+      singleImport: true,
+    });
+    if (!limit.ok) return { error: limit.error };
 
     const meta = await fetchVideoMetadata(toAdd);
     let position = await nextPosition(supabase, playlistId);
@@ -192,6 +209,12 @@ export async function importYoutubePlaylist(
     const { error } = await supabase.from("playlist_tracks").insert(rows);
     if (error) return { error: error.message };
 
+    await recordImportUsage(
+      supabase,
+      userId,
+      "import_playlist",
+      rows.length,
+    );
     revalidatePlaylist(playlistId);
     const blockedNote =
       blockedCount > 0

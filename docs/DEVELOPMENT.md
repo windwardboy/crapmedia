@@ -50,12 +50,25 @@ For **Continue listening** on the home screen, also run [`supabase/migrations/00
 
 For **marketing interest sign-ups** on crapmedia.com, run [`supabase/migrations/003_interest_signups.sql`](../supabase/migrations/003_interest_signups.sql), then add the same `NEXT_PUBLIC_SUPABASE_*` keys to the **web** Vercel project.
 
+For **YouTube import limits** and the admin dashboard, run [`supabase/migrations/004_youtube_import_log.sql`](../supabase/migrations/004_youtube_import_log.sql).
+
 ## YouTube (player only)
 
 1. In [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Library** → enable **YouTube Data API v3**.
 2. **Credentials → Create credentials → API key** (restrict to YouTube Data API v3 if you like).
 3. Add `YOUTUBE_API_KEY` to the **player** Vercel project (and `apps/player/.env.local` for dev). **Do not** use `NEXT_PUBLIC_` — keep it server-side only.
 4. Redeploy the player after adding the key.
+
+## Admin & import limits (player)
+
+1. Run [`supabase/migrations/004_youtube_import_log.sql`](../supabase/migrations/004_youtube_import_log.sql).
+2. On the **player** Vercel project, set:
+   - `ADMIN_EMAILS` — your Google sign-in email (comma-separated for multiple admins)
+   - `SUPABASE_SERVICE_ROLE_KEY` — from Supabase → Settings → API (**server only**, never expose to the client)
+3. Optional: `YOUTUBE_DAILY_VIDEO_CAP` (default `200`), `YOUTUBE_SINGLE_IMPORT_CAP` (default `100`).
+4. Open **Settings → Admin dashboard** when signed in as an admin, or go to `/admin`.
+
+Imports count YouTube **metadata** fetches only (add track, playlist import, server embed sync). Playback is unlimited. Admins bypass caps.
 
 ## Environment
 

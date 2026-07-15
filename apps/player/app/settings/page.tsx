@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { AppNav } from "@/components/app-nav";
 import { AuthSection } from "@/components/auth-section";
 import { SkinPicker } from "@/components/skin-picker";
+import { isAdminUser } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function SettingsPage({
@@ -60,6 +62,20 @@ export default async function SettingsPage({
             Phase 3.
           </p>
         </section>
+
+        {isAdminUser(user) ? (
+          <section className="mt-10">
+            <Link
+              href="/admin"
+              className="cm-card block p-6 transition hover:border-cm-accent"
+            >
+              <h2 className="font-semibold">Admin dashboard</h2>
+              <p className="mt-2 text-sm text-cm-text-muted">
+                Users, imports, and interest sign-ups.
+              </p>
+            </Link>
+          </section>
+        ) : null}
       </main>
     </>
   );
