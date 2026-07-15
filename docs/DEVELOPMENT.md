@@ -48,6 +48,8 @@ After creating the Supabase project, run the SQL in [`supabase/migrations/001_pl
 
 For **Continue listening** on the home screen, also run [`supabase/migrations/002_last_played_at.sql`](../supabase/migrations/002_last_played_at.sql).
 
+For **marketing interest sign-ups** on crapmedia.com, run [`supabase/migrations/003_interest_signups.sql`](../supabase/migrations/003_interest_signups.sql), then add the same `NEXT_PUBLIC_SUPABASE_*` keys to the **web** Vercel project.
+
 ## YouTube (player only)
 
 1. In [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Library** → enable **YouTube Data API v3**.
@@ -70,7 +72,13 @@ Two projects from one repo. **Root Directory** must be set per project; `vercel.
 
 If install fails, confirm **Settings → General → Root Directory** matches the table. Each app’s `vercel.json` uses `cd ../.. && pnpm install`.
 
-Set `NEXT_PUBLIC_PLAYER_URL=https://play.crapmedia.com` on the **web** project, then redeploy.
+Set on the **web** project:
+
+- `NEXT_PUBLIC_PLAYER_URL=https://play.crapmedia.com`
+- `NEXT_PUBLIC_SITE_URL=https://crapmedia.com`
+- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (same as player — for interest sign-ups)
+
+Then redeploy.
 
 ## Monorepo layout
 

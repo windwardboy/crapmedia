@@ -78,6 +78,9 @@ importers:
       '@crapmedia/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@supabase/supabase-js':
+        specifier: ^2.49.1
+        version: 2.110.5
       next:
         specifier: 15.3.6
         version: 15.3.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)

@@ -43,3 +43,9 @@ body {
 .cm-btn-ghost:hover {
   background: var(--cm-bg-subtle);
 }
+
+.cm-card {
+  border-radius: 0.75rem;
+  border: 1px solid var(--cm-border);
+  background: var(--cm-bg-elevated);
+}
