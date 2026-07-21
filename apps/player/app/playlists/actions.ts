@@ -83,19 +83,20 @@ export async function deletePlaylist(playlistId: string) {
   redirect("/playlists");
 }
 
-export async function setDrivingDefault(playlistId: string, enabled: boolean) {
+async function setExclusiveDefault(
+  playlistId: string,
+  enabled: boolean,
+  flag: "is_driving_default" | "is_sleep_default",
+) {
   const { supabase, userId } = await requireUserId();
 
   if (enabled) {
-    await supabase
-      .from("playlists")
-      .update({ is_driving_default: false })
-      .eq("user_id", userId);
+    await supabase.from("playlists").update({ [flag]: false }).eq("user_id", userId);
   }
 
   const { error } = await supabase
     .from("playlists")
-    .update({ is_driving_default: enabled })
+    .update({ [flag]: enabled })
     .eq("id", playlistId)
     .eq("user_id", userId);
 
@@ -105,4 +106,14 @@ export async function setDrivingDefault(playlistId: string, enabled: boolean) {
 
   revalidatePath("/playlists");
   revalidatePath(`/playlists/${playlistId}`);
+  revalidatePath("/drive");
+  revalidatePath("/sleep");
+}
+
+export async function setDrivingDefault(playlistId: string, enabled: boolean) {
+  await setExclusiveDefault(playlistId, enabled, "is_driving_default");
+}
+
+export async function setSleepDefault(playlistId: string, enabled: boolean) {
+  await setExclusiveDefault(playlistId, enabled, "is_sleep_default");
 }

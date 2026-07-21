@@ -28,7 +28,13 @@ export async function listPlaylists(): Promise<PlaylistWithTrackCount[] | null> 
     const track_count = countRow?.[0]?.count ?? 0;
     const { playlist_tracks, ...playlist } = row;
     void playlist_tracks;
-    return { ...playlist, track_count } as PlaylistWithTrackCount;
+    return {
+      ...playlist,
+      is_sleep_default: Boolean(
+        (playlist as { is_sleep_default?: boolean }).is_sleep_default,
+      ),
+      track_count,
+    } as PlaylistWithTrackCount;
   });
 }
 
@@ -75,10 +81,9 @@ export async function getPlaylist(
   };
 }
 
-export async function getDrivingDefaultPlaylist(): Promise<{
-  playlist: Playlist;
-  tracks: PlaylistTrack[];
-} | null> {
+async function getDefaultPlaylistByFlag(
+  flag: "is_driving_default" | "is_sleep_default",
+): Promise<{ playlist: Playlist; tracks: PlaylistTrack[] } | null> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -92,7 +97,7 @@ export async function getDrivingDefaultPlaylist(): Promise<{
     .from("playlists")
     .select("*")
     .eq("user_id", user.id)
-    .eq("is_driving_default", true)
+    .eq(flag, true)
     .maybeSingle();
 
   if (error) {
@@ -117,6 +122,14 @@ export async function getDrivingDefaultPlaylist(): Promise<{
     playlist: playlist as Playlist,
     tracks: (tracks ?? []) as PlaylistTrack[],
   };
+}
+
+export async function getDrivingDefaultPlaylist() {
+  return getDefaultPlaylistByFlag("is_driving_default");
+}
+
+export async function getSleepDefaultPlaylist() {
+  return getDefaultPlaylistByFlag("is_sleep_default");
 }
 
 export async function requireUser(nextPath: string) {

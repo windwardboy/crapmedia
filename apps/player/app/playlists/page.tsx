@@ -16,7 +16,7 @@ export default async function PlaylistsPage() {
           <div>
             <h1 className="text-2xl font-bold">Playlists</h1>
             <p className="mt-2 text-cm-text-muted">
-              Your queues for listening and driving mode.
+              Your queues — flip Drive or Sleep on a card to set the default.
             </p>
           </div>
           {playlists ? (

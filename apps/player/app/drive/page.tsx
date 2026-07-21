@@ -29,9 +29,9 @@ export default async function DrivePage() {
         <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
           <h1 className="text-xl font-bold">No driving playlist</h1>
           <p className="mt-3 max-w-sm text-sm text-cm-text-muted">
-            Open a playlist and turn on{" "}
-            <strong className="text-cm-text">Default for driving mode</strong>,
-            then come back here.
+            On the playlists page, flip the{" "}
+            <strong className="text-cm-text">Drive</strong> switch on a
+            playlist, then come back here.
           </p>
           <Link
             href="/playlists"

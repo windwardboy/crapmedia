@@ -1,12 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import {
-  deletePlaylist,
-  setDrivingDefault,
-  updatePlaylist,
-} from "@/app/playlists/actions";
+import { deletePlaylist, updatePlaylist } from "@/app/playlists/actions";
+import { PlaylistModeToggles } from "@/components/playlists/playlist-mode-toggles";
 import { YoutubeTracksPanel } from "@/components/playlists/youtube-tracks-panel";
 import type { Playlist, PlaylistTrack } from "@/lib/playlists/types";
 
@@ -17,22 +13,10 @@ export function PlaylistEditor({
   playlist: Playlist;
   tracks: PlaylistTrack[];
 }) {
-  const router = useRouter();
   const [pending, startTransition] = useTransition();
 
-  function handleDrivingDefault(checked: boolean) {
-    startTransition(async () => {
-      await setDrivingDefault(playlist.id, checked);
-      router.refresh();
-    });
-  }
-
   function handleDelete() {
-    if (
-      !confirm(
-        `Delete "${playlist.name}"? This cannot be undone.`,
-      )
-    ) {
+    if (!confirm(`Delete "${playlist.name}"? This cannot be undone.`)) {
       return;
     }
     startTransition(async () => {
@@ -76,22 +60,20 @@ export function PlaylistEditor({
         </button>
       </form>
 
-      <div className="cm-card p-6">
-        <label className="flex cursor-pointer items-center justify-between gap-4">
-          <div>
-            <p className="font-medium">Default for driving mode</p>
-            <p className="text-sm text-cm-text-muted">
-              Use this playlist when you open Drive.
-            </p>
-          </div>
-          <input
-            type="checkbox"
-            checked={playlist.is_driving_default}
-            disabled={pending}
-            onChange={(e) => handleDrivingDefault(e.target.checked)}
-            className="h-5 w-5 accent-[var(--cm-accent)]"
-          />
-        </label>
+      <div className="cm-card space-y-3 p-6">
+        <div>
+          <p className="font-medium">Mode defaults</p>
+          <p className="text-sm text-cm-text-muted">
+            Which playlist opens for Drive and Sleep. Only one playlist can be
+            default for each mode.
+          </p>
+        </div>
+        <PlaylistModeToggles
+          playlistId={playlist.id}
+          isDrivingDefault={playlist.is_driving_default}
+          isSleepDefault={Boolean(playlist.is_sleep_default)}
+          layout="stack"
+        />
       </div>
 
       <YoutubeTracksPanel playlist={playlist} tracks={tracks} />

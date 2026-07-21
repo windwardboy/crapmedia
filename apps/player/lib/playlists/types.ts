@@ -6,6 +6,7 @@ export type Playlist = {
   name: string;
   description: string | null;
   is_driving_default: boolean;
+  is_sleep_default: boolean;
   sort_order: number;
   created_at: string;
   updated_at: string;

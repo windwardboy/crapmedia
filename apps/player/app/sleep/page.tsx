@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SleepPlayer } from "@/components/sleep/sleep-player";
-import { getDrivingDefaultPlaylist } from "@/lib/playlists/queries";
+import { getSleepDefaultPlaylist } from "@/lib/playlists/queries";
 import { youtubeTracks } from "@/lib/playlists/track-utils";
 
 export default async function SleepPage() {
-  const result = await getDrivingDefaultPlaylist();
+  const result = await getSleepDefaultPlaylist();
 
   if (result === null) {
     const supabase = await import("@/lib/supabase/server").then((m) =>
@@ -27,12 +27,11 @@ export default async function SleepPage() {
           </Link>
         </header>
         <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-          <h1 className="text-xl font-bold">No sleep playlist yet</h1>
+          <h1 className="text-xl font-bold">No sleep playlist</h1>
           <p className="mt-3 max-w-sm text-sm text-cm-text-muted">
-            Sleep uses your{" "}
-            <strong className="text-cm-text">driving default</strong> playlist,
-            or open any playlist and choose{" "}
-            <strong className="text-cm-text">Sleep</strong>.
+            On the playlists page, flip the{" "}
+            <strong className="text-cm-text">Sleep</strong> switch on a
+            playlist — or open any playlist and choose Sleep.
           </p>
           <Link
             href="/playlists"

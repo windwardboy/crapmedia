@@ -52,6 +52,8 @@ For **marketing interest sign-ups** on crapmedia.com, run [`supabase/migrations/
 
 For **YouTube import limits** and the admin dashboard, run [`supabase/migrations/004_youtube_import_log.sql`](../supabase/migrations/004_youtube_import_log.sql).
 
+For **Sleep mode default** on playlist cards, run [`supabase/migrations/005_sleep_default.sql`](../supabase/migrations/005_sleep_default.sql).
+
 ## YouTube (player only)
 
 1. In [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Library** → enable **YouTube Data API v3**.
