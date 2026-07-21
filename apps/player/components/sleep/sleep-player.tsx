@@ -1,0 +1,263 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { WaveBars } from "@crapmedia/ui";
+import { PlaybackErrorBanner } from "@/components/playback/playback-error-banner";
+import { TransportControls } from "@/components/playback/transport-controls";
+import { SleepTimerControls } from "@/components/sleep/sleep-timer-controls";
+import { usePlaybackProgress } from "@/hooks/use-playback-progress";
+import { usePlaybackRate } from "@/hooks/use-playback-rate";
+import { usePlaybackSession } from "@/hooks/use-playback-session";
+import { useSleepTimer } from "@/hooks/use-sleep-timer";
+import { useYoutubePlaylistPlayback } from "@/hooks/use-youtube-playlist-playback";
+import { YouTubePlayer } from "@/components/youtube/youtube-player";
+import { formatDuration } from "@/lib/youtube/duration";
+import type { Playlist, PlaylistTrack } from "@/lib/playlists/types";
+
+export function SleepPlayer({
+  playlist,
+  tracks,
+  startTrackId,
+}: {
+  playlist: Playlist;
+  tracks: PlaylistTrack[];
+  startTrackId?: string;
+}) {
+  const {
+    index,
+    playing,
+    setPlaying,
+    track,
+    videoId,
+    playerRef,
+    goNext,
+    goPrev,
+    togglePlay,
+    handleEnded,
+    shuffle,
+    loop,
+    toggleShuffle,
+    toggleLoop,
+    hasNext,
+    hasPrev,
+    resumeSec,
+    cacheResume,
+  } = useYoutubePlaylistPlayback(tracks, { startTrackId });
+
+  const pauseForSleep = useCallback(() => {
+    setPlaying(false);
+    playerRef.current?.pause();
+  }, [setPlaying, playerRef]);
+
+  const {
+    active: timerActive,
+    shouldStopOnTrackEnd,
+    countdownLabel,
+    customMinutes,
+    setCustomMinutes,
+    startDuration,
+    startEndOfTrack,
+    extend,
+    clear: clearTimer,
+  } = useSleepTimer({ onExpire: pauseForSleep });
+
+  const handleEndedForSleep = useCallback(() => {
+    if (shouldStopOnTrackEnd) {
+      clearTimer();
+      pauseForSleep();
+      return;
+    }
+    handleEnded();
+  }, [shouldStopOnTrackEnd, clearTimer, pauseForSleep, handleEnded]);
+
+  const {
+    playbackError,
+    skippedNotice,
+    onPlayerError,
+    onEnded,
+    dismissError,
+    skipOnError,
+  } = usePlaybackSession({
+    trackId: track?.id,
+    videoId,
+    playerRef,
+    playing,
+    setPlaying,
+    handleEnded: handleEndedForSleep,
+    hasNext,
+    goNext,
+    cacheResume,
+    trackCount: tracks.length,
+  });
+
+  const { current, duration, percent } = usePlaybackProgress(
+    playerRef,
+    playing,
+    `${videoId ?? ""}-${index}`,
+    track?.duration_sec,
+  );
+
+  const { rateLabel, cycleRate } = usePlaybackRate(
+    playerRef,
+    `${videoId ?? ""}-${index}`,
+  );
+
+  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+
+  useEffect(() => {
+    if (!playing) {
+      setWakeLock(null);
+      return;
+    }
+
+    let cancelled = false;
+    let sentinel: WakeLockSentinel | null = null;
+
+    async function acquire() {
+      if (!("wakeLock" in navigator)) return;
+      try {
+        sentinel = await navigator.wakeLock.request("screen");
+        if (cancelled) {
+          await sentinel.release();
+          return;
+        }
+        setWakeLock(sentinel);
+      } catch {
+        /* unsupported or denied */
+      }
+    }
+
+    acquire();
+
+    return () => {
+      cancelled = true;
+      sentinel?.release().catch(() => {});
+    };
+  }, [playing]);
+
+  if (!track || !videoId) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+        <p className="text-cm-text-muted">
+          No playable tracks in this playlist.
+        </p>
+        <Link
+          href={`/playlists/${playlist.id}`}
+          className="mt-4 text-sm text-cm-accent hover:underline"
+        >
+          Add YouTube tracks →
+        </Link>
+      </div>
+    );
+  }
+
+  const resumeAt = resumeSec(track);
+
+  return (
+    <>
+      <div className="sr-only" aria-hidden>
+        <YouTubePlayer
+          ref={playerRef}
+          videoId={videoId}
+          playing={playing}
+          startSeconds={resumeAt}
+          onEnded={onEnded}
+          onError={onPlayerError}
+        />
+      </div>
+
+      <main className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-cm-accent">
+          Sleep mode
+        </p>
+        <h1 className="max-w-md text-center text-2xl font-bold leading-tight sm:text-3xl">
+          {track.title}
+        </h1>
+        <p className="mt-2 text-lg text-cm-text-muted">{track.artist}</p>
+        <p className="mt-1 text-sm text-cm-text-muted">
+          {playlist.name} · {index + 1} of {tracks.length}
+        </p>
+        {skippedNotice ? (
+          <p className="mt-2 text-sm text-cm-text-muted">{skippedNotice}</p>
+        ) : null}
+
+        {playbackError ? (
+          <div className="mt-6 w-full max-w-md">
+            <PlaybackErrorBanner
+              message={playbackError}
+              hasNext={hasNext}
+              onSkip={skipOnError}
+              onDismiss={dismissError}
+            />
+          </div>
+        ) : null}
+
+        <div className="my-10 flex w-full justify-center opacity-70">
+          <WaveBars className={playing ? "" : "paused"} />
+        </div>
+
+        <TransportControls
+          playing={playing}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+          shuffle={shuffle}
+          loop={loop}
+          onPrev={goPrev}
+          onNext={goNext}
+          onTogglePlay={togglePlay}
+          onToggleShuffle={toggleShuffle}
+          onToggleLoop={toggleLoop}
+          rateLabel={rateLabel}
+          onCycleRate={cycleRate}
+          size="large"
+        />
+
+        <div className="mt-8 w-full max-w-xs">
+          <div
+            className="h-1.5 overflow-hidden rounded-full bg-cm-bg-subtle"
+            role="progressbar"
+            aria-valuenow={Math.round(percent)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Playback progress"
+          >
+            <div
+              className="h-full rounded-full bg-cm-accent transition-[width] duration-300 ease-linear"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+          <div className="mt-2 flex justify-between text-xs text-cm-text-muted tabular-nums">
+            <span>{formatDuration(Math.round(current))}</span>
+            <span>
+              {formatDuration(duration > 0 ? Math.round(duration) : null)}
+            </span>
+          </div>
+        </div>
+
+        <SleepTimerControls
+          active={timerActive}
+          countdownLabel={countdownLabel}
+          customMinutes={customMinutes}
+          onCustomMinutesChange={setCustomMinutes}
+          onStartDuration={startDuration}
+          onStartEndOfTrack={startEndOfTrack}
+          onExtend={extend}
+          onCancel={clearTimer}
+        />
+
+        <p className="mt-6 max-w-sm text-center text-xs text-cm-text-muted">
+          {!playing
+            ? resumeAt >= 30
+              ? `Resumes from ${formatDuration(resumeAt)} · tap play to continue`
+              : "Tap play to start. Video stays hidden."
+            : timerActive
+              ? "Timer on · screen wake lock while playing."
+              : wakeLock
+                ? "Screen wake lock active."
+                : "Playing · video hidden."}
+        </p>
+      </main>
+    </>
+  );
+}

@@ -198,6 +198,31 @@ Every library source implements:
 
 ---
 
+### Phase 1.5 — Sleep mode + sleep timer *(priority)*
+**Goal:** A bedtime listening mode (no video) with a timer so music and audiobooks don’t run all night.
+
+**Drive stays simple** — no sleep timer there. **Sleep mode** mirrors Drive’s video-free, large-control layout, and is the only place the sleep timer lives. Distracting video is hidden the same way as in Drive.
+
+People often put a playlist or chapter on when falling asleep — same habit as dedicated audiobook apps. Without a timer, the player keeps going for hours. Ship this before Phase 2 infrastructure work.
+
+#### Sleep mode (`/sleep`)
+- [x] Route + entry point from home / playlist (alongside Drive)
+- [x] Same idea as Drive: no video surface, title/channel, large transport controls
+- [x] Dim / ambient-friendly styling suitable for bedroom use
+- [x] Wake lock while playing (same as Drive — optional later: release on timer expiry only)
+
+#### Sleep timer (Sleep mode only)
+- [x] Timer controls on Sleep screen (presets + status) — large enough for bed use
+- [x] Presets: 15 / 30 / 45 / 60 min + custom duration
+- [x] Optional: **stop at end of current track** (finish the chapter/song, then stop)
+- [x] Countdown visible while active; cancel / extend without leaving Sleep
+- [x] On expiry: pause playback; clear wake lock; no auto-advance to next track
+- [x] Persist “last used duration” (local preference)
+
+**Exit criteria:** Open Sleep mode at bedtime, set 30 min (or end of track), screen stays video-free, phone stops playing without further interaction.
+
+---
+
 ### Phase 2 — Remote MP3 connector (Weeks 5–7)
 **Goal:** Play self-hosted MP3s from shared hosting (your current PHP setup).
 
@@ -275,6 +300,7 @@ Every library source implements:
 |-------|-------|-------------|
 | `/` | 1 | Home — continue listening, playlists, “Drive” CTA |
 | `/drive` | 1 | Driving mode (minimal) |
+| `/sleep` | 1.5 | Sleep mode (video-free + sleep timer) |
 | `/playlists` | 1 | List playlists |
 | `/playlists/[id]` | 1 | Edit + play |
 | `/playlists/new` | 1 | Create |
@@ -324,7 +350,7 @@ Every library source implements:
 - [ ] **Speed-aware UI** — hide non-essentials above X km/h (GPS permission tradeoff)
 
 ### Playback
-- [ ] Sleep timer (“stop after 30 min”)
+- [x] **Sleep timer** → pulled into **Phase 1.5** (priority)
 - [ ] Playback speed (0.75×–2×) — especially for audiobooks; YT iframe support varies
 - [ ] Skip silence (audiobooks — hard for YT, easier for MP3)
 - [ ] Crossfade between MP3 tracks only
@@ -415,10 +441,9 @@ Every library source implements:
 
 ## 10. Immediate next steps
 
-1. **Confirm** subdomain: `play.crapmedia.com`
-2. **Confirm** stack: Next.js + Supabase + Vercel monorepo
-3. **Phase 0 kickoff:** scaffold repo, Supabase, DNS
-4. **Parallel:** Draft `connector-spec.md` from existing PHP `api.php` (prep for Phase 2)
+1. **Phase 1.5:** Sleep mode (`/sleep`, Drive-like, no video) + sleep timer (Sleep only) — **next build priority**
+2. **Phase 2 prep:** Draft `docs/connector-spec.md` from existing PHP `api.php`
+3. **Phase 2:** Remote MP3 connector + mixed playlists
 
 ---
 
@@ -426,6 +451,8 @@ Every library source implements:
 
 | Date | Change |
 |------|--------|
+| 2026-07-21 | **Sleep mode + timer** promoted → **Phase 1.5** (Drive stays simple; timer only in Sleep) |
+| 2026-07-21 | **Sleep timer** promoted from backlog → **Phase 1.5** (priority before Phase 2) |
 | 2026-07-14 | Initial build plan from architecture brainstorming session |
 | 2026-07-14 | Workspace cleanup: removed ~2 GB StackCP backup; kept `legacy/`, `packages/brand/`, playlist JSON |
 | 2026-07-14 | MIT license, skin system (Charcoal default), CONTRIBUTING + THEMING docs |

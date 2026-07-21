@@ -23,7 +23,7 @@ See [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) for build, env, and Vercel depl
 
 Phase 0 complete locally: monorepo, Charcoal + Stone themes, PWA manifest, driving mode shell.
 
-Next: **Phase 1** — Supabase auth, YouTube playlists. See [`BUILD_PLAN.md`](BUILD_PLAN.md).
+Next: **Phase 1.5** — Sleep mode (video-free, like Drive) + sleep timer. Then Phase 2 remote MP3 connector. See [`BUILD_PLAN.md`](BUILD_PLAN.md).
 
 ## Repo layout
 

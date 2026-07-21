@@ -23,15 +23,15 @@ export default async function HomePage() {
           />
           <div>
             <p className="text-sm font-medium uppercase tracking-wide text-cm-accent">
-              YouTube playlists · Driving mode
+              YouTube playlists · Drive · Sleep
             </p>
             <h1 className="mt-1 text-3xl font-bold tracking-tight">
               CrapMedia Player
             </h1>
             <p className="mt-2 max-w-lg text-cm-text-muted">
-              Import playlists from YouTube, listen with video, or drive with
-              big controls and your default queue. Playback resumes where you
-              left off.
+              Import playlists from YouTube, listen with video, drive with big
+              controls, or sleep with a timer — no video distraction. Playback
+              resumes where you left off.
             </p>
           </div>
         </div>
@@ -59,8 +59,21 @@ export default async function HomePage() {
           </Link>
 
           <Link
-            href="/playlists"
+            href="/sleep"
             className="cm-card block p-6 transition hover:border-cm-accent"
+          >
+            <div className="text-xs font-semibold uppercase tracking-wide text-cm-accent">
+              Bedtime
+            </div>
+            <h2 className="mt-2 text-xl font-semibold">Sleep mode</h2>
+            <p className="mt-2 text-sm text-cm-text-muted">
+              Video-free listening with a sleep timer — stops when you doze off.
+            </p>
+          </Link>
+
+          <Link
+            href="/playlists"
+            className="cm-card block p-6 transition hover:border-cm-accent sm:col-span-2"
           >
             <div className="text-xs font-semibold uppercase tracking-wide text-cm-accent">
               Library

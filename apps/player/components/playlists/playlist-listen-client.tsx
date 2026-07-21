@@ -131,7 +131,13 @@ export function PlaylistListenClient({
         onCycleRate={cycleRate}
       />
 
-      <p className="text-center text-sm">
+      <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center text-sm">
+        <Link
+          href={`/playlists/${playlistId}/sleep`}
+          className="text-cm-accent hover:underline"
+        >
+          Sleep mode
+        </Link>
         <Link
           href={`/playlists/${playlistId}`}
           className="text-cm-text-muted hover:text-cm-text"

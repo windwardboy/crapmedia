@@ -86,12 +86,20 @@ export function YoutubeTracksPanel({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Tracks</h2>
         {tracks.length > 0 ? (
-          <Link
-            href={`/playlists/${playlist.id}/listen`}
-            className="cm-btn cm-btn-primary px-5 py-2 text-sm"
-          >
-            Play playlist
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={`/playlists/${playlist.id}/listen`}
+              className="cm-btn cm-btn-primary px-5 py-2 text-sm"
+            >
+              Play playlist
+            </Link>
+            <Link
+              href={`/playlists/${playlist.id}/sleep`}
+              className="cm-btn cm-btn-outline px-5 py-2 text-sm"
+            >
+              Sleep
+            </Link>
+          </div>
         ) : null}
       </div>
 

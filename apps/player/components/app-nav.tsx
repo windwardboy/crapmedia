@@ -8,6 +8,7 @@ const baseLinks = [
   { href: "/", label: "Home" },
   { href: "/playlists", label: "Playlists" },
   { href: "/drive", label: "Drive" },
+  { href: "/sleep", label: "Sleep" },
   { href: "/settings", label: "Settings" },
 ];
 
